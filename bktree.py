@@ -3,9 +3,30 @@
 # Project: Modulprojekt PRO II
 # Datum: 31.07.2022
 
+
+import sys
+
+
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
+        self.ld = calculate_levenshtein_distance
+        self.root = wordlist[0]
+        self.tree = (self.root, {})
+
+    def build_tree(self):
+        """Build BK Tree from list of strings."""
+        for word in self.wordlist[1:]:
+            self.tree = self.insert_word(self.tree, word)
+            print(self.tree)
+
+    def insert_word(self, node, word):
+        d = self.ld(word, node[0])
+        if d not in node[1]:
+            node[1][d] = (word, {})
+        else:
+            self.insert_word(node[1][d], word)
+        return node
 
 
 def calculate_levenshtein_distance(str_1, str_2) -> int:
@@ -31,6 +52,23 @@ def calculate_levenshtein_distance(str_1, str_2) -> int:
     return edits
 
 
+# todo: add another string metric: string metrics like Damerau-Levenshtein,
+# Hamming distance, Jaro-Winkler and Strike a match.
+
+def read_data_from_filename(filename):
+    with open(filename) as file:
+        content = file.read().lower().split()
+        return content
+
+
 if __name__ == '__main__':
-    test_wordlist = BKTree(["cat", "cut", "hat", "man", "hit"])
-    print(calculate_levenshtein_distance('cat', 'chello'))
+    # filename = sys.argv[1]
+    # words = read_data_from_filename(filename)
+    # terminal_tree = BKTree(words)
+    test_words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
+    test_tree = BKTree(test_words)
+    print(calculate_levenshtein_distance('book', 'cake'))
+    print(test_tree.build_tree())
+
+
+# Added txt file as example and started building tree from wordlist
