@@ -5,6 +5,8 @@
 
 
 import sys
+import networkx as nx
+import matplotlib.pyplot as plt
 
 
 def calculate_levenshtein_distance(str_1, str_2) -> int:
@@ -95,24 +97,18 @@ if __name__ == '__main__':
     test_tree.build_tree()
     print(test_tree.search_word('book', 1))
 
-    import networkx as nx
-    import matplotlib.pyplot as plt
+
 
     G = nx.Graph()
     G.add_edges_from([('book', 'boo'), ('boo', 'boom'), ('book', 'boom'), ('book', 'boop')])
     pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
-
-    nx.draw_networkx(G, pos=pos)
+    labels = {('book', 'boo'): 1, ('boo', 'boom'): 1, ('book', 'boom'): 1, ('book', 'boop'): 1}
+    nx.draw_networkx(G, pos=pos, node_size=1500)
+    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=labels)
+    plt.savefig("bktree.png")
     plt.show()
+
 
     user_input = input('Please enter a word query and the desired edit distance\n')
     search_word = user_input.split()[0]
     d = user_input.split()[1]
-
-
-
-
-# Added txt file as example and started building tree from wordlist
-# Added search method and some docstrings
-# worked on test search_word, unsuccessfully
-# attempts to use comnandline args
