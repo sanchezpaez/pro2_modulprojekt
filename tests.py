@@ -26,3 +26,8 @@ class TestBKTree:
 
     def test_search_word(self):
         assert self.tree.search_word('book', 1) == []
+
+def test_create_triple():
+    connections = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
+                            4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
+    assert bktree.create_triple(connections) == []

@@ -40,6 +40,18 @@ def read_data_from_filename(filename):
         content = file.read().lower().split()
         return content
 
+def create_triple(nested_tuple):
+    triples = []
+    node_1 = nested_tuple[0]
+    nested_element = nested_tuple[1]
+    for distance in nested_element:
+        node_2 = nested_element[distance][0]
+        triple = node_1, node_2, distance
+        triples.append(triple)
+        new_tuple = nested_element[distance]
+        #other_results = create_triple(new_tuple)
+    return triples
+
 
 class BKTree:
     def __init__(self, wordlist):
@@ -52,7 +64,7 @@ class BKTree:
         """Build BK Tree from list of strings."""
         for word in self.wordlist[1:]:
             self.tree = self.insert_word(self.tree, word)
-            print(self.tree)
+        print(self.tree)
 
     def insert_word(self, node, word):
         """Insert a new word in the tree."""
@@ -98,8 +110,17 @@ if __name__ == '__main__':
     print(test_tree.search_word('book', 1))
 
 
+    connections = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}), 4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
+
+    print(create_triple(connections))
 
     G = nx.Graph()
+    G.add_weighted_edges_from([('book', 'boo', 1), ('boo', 'boom', 2), ('book', 'boom', 3), ('book', 'boop', 1)])
+    pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
+    nx.draw_networkx(G, pos=pos, node_size=1500)
+    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=G.edges)
+    plt.show()
+
     G.add_edges_from([('book', 'boo'), ('boo', 'boom'), ('book', 'boom'), ('book', 'boop')])
     pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
     labels = {('book', 'boo'): 1, ('boo', 'boom'): 1, ('book', 'boom'): 1, ('book', 'boop'): 1}
@@ -107,6 +128,13 @@ if __name__ == '__main__':
     nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=labels)
     plt.savefig("bktree.png")
     plt.show()
+
+    # dod = {0: {1: {"weight": 1}}}  # single edge (0,1)
+    # G = nx.from_dict_of_dicts(dod)
+    # G = nx.from_nested_tuple(test_tree.tree)
+    # pos = {0: (20, 30), 1: (40, 30)}
+    # nx.draw_networkx(G, node_size=1500)
+    # plt.show()
 
 
     user_input = input('Please enter a word query and the desired edit distance\n')
