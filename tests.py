@@ -17,7 +17,7 @@ class TestLevenshtein:
         assert calculate_levenshtein_distance('', 'man') == 3
 
     def test_different_length_words(self):
-        assert calculate_levenshtein_distance('cream', 'corn') == 4
+        assert calculate_levenshtein_distance('help', 'loop') == 4
 
 
 class TestBKTree:
@@ -34,3 +34,23 @@ def test_create_triple():
         ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1), ('boo', 'cook', 2), ('book', 'cake', 4),
         ('cake', 'cake', 0), ('cake', 'cape', 1), ('cake', 'cart', 2)
     ]
+
+def test_visualize_graph():
+    test_triples = [
+        ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1),
+        ('boo', 'cook', 2), ('book', 'cake', 4), ('cake', 'cake', 0),
+        ('cake', 'cape', 1), ('cake', 'cart', 2)
+    ]
+    test_tuples = [
+        ('book', 'books'), ('books', 'boo'), ('boo', 'boon'), ('boo', 'cook'),
+        ('book', 'cake'), ('cake', 'cake'), ('cake', 'cape'), ('cake', 'cart')
+    ]
+    assert bktree.visualize_graph(test_tuples, test_triples) == 0
+
+def test_get_edge_labels():
+    test_triples = [
+        ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1),
+        ('boo', 'cook', 2), ('book', 'cake', 4), ('cake', 'cake', 0),
+        ('cake', 'cape', 1), ('cake', 'cart', 2)
+    ]
+    assert bktree.get_edge_labels(test_triples) == {}
