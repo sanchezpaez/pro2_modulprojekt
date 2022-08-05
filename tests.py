@@ -30,4 +30,7 @@ class TestBKTree:
 def test_create_triple():
     connections = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
                             4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
-    assert bktree.create_triple(connections) == []
+    assert bktree.create_triple(connections) == [
+        ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1), ('boo', 'cook', 2), ('book', 'cake', 4),
+        ('cake', 'cake', 0), ('cake', 'cape', 1), ('cake', 'cart', 2)
+    ]

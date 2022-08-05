@@ -41,6 +41,14 @@ def read_data_from_filename(filename):
         return content
 
 def create_triple(nested_tuple):
+    """
+    Take in a nested tuple with a bk-tree structure and adapt it to
+    a tuple of 3 format, where node_1, node_2 and their edit distance is
+    represented. The resulting list of tuples will be then used by networkx
+    to draw a graph visualization of the bk-tree structure.
+    :param nested_tuple: str, str, int
+    :return: list of triples
+    """
     triples = []
     node_1 = nested_tuple[0]
     nested_element = nested_tuple[1]
@@ -49,7 +57,9 @@ def create_triple(nested_tuple):
         triple = node_1, node_2, distance
         triples.append(triple)
         new_tuple = nested_element[distance]
-        #other_results = create_triple(new_tuple)
+        if new_tuple[1]:
+            triples = triples + create_triple(new_tuple)
+
     return triples
 
 
@@ -110,22 +120,25 @@ if __name__ == '__main__':
     print(test_tree.search_word('book', 1))
 
 
-    connections = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}), 4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
-
-    print(create_triple(connections))
+    connections = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
+                            4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})}
+                   )
+    test_triples = create_triple(connections)
+    print(test_triples)
 
     G = nx.Graph()
-    G.add_weighted_edges_from([('book', 'boo', 1), ('boo', 'boom', 2), ('book', 'boom', 3), ('book', 'boop', 1)])
-    pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
+    G.add_weighted_edges_from(test_triples)
+    pos = {'book': (20, 30), 'books': (40, 30), 'boo': (30, 10), 'boon': (0, 40), 'cook': (10, 30),
+           'cake': (40, 10), 'cape': (10, 20), 'cart': (0, 20)}
     nx.draw_networkx(G, pos=pos, node_size=1500)
     nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=G.edges)
     plt.show()
 
-    G.add_edges_from([('book', 'boo'), ('boo', 'boom'), ('book', 'boom'), ('book', 'boop')])
-    pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
-    labels = {('book', 'boo'): 1, ('boo', 'boom'): 1, ('book', 'boom'): 1, ('book', 'boop'): 1}
-    nx.draw_networkx(G, pos=pos, node_size=1500)
-    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=labels)
+    # G.add_edges_from([('book', 'boo'), ('boo', 'boom'), ('book', 'boom'), ('book', 'boop')])
+    # pos = {'book': (20, 30), 'boo': (40, 30), 'boom': (30, 10), 'boop': (0, 40)}
+    # labels = {('book', 'boo'): 1, ('boo', 'boom'): 1, ('book', 'boom'): 1, ('book', 'boop'): 1}
+    # nx.draw_networkx(G, pos=pos, node_size=1500)
+    # nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=labels)
     plt.savefig("bktree.png")
     plt.show()
 
