@@ -30,9 +30,23 @@ def calculate_levenshtein_distance(str_1, str_2) -> int:
         # Compute the minimal number of edits (insert, delete, or replace)
         edits = min(calculate_levenshtein_distance(str_1, str_2[1:]) + 1,
                     calculate_levenshtein_distance(str_1[1:], str_2) + 1,
+                    # If the characters are the same, we don't increase the edits, else we do by 1
                     calculate_levenshtein_distance(str_1[1:], str_2[1:]) + (str_1[0] != str_2[0]))
     return edits
 
+
+def calculate_hamming_distance(str_1, str_2):
+    is_not_measurable = False
+    if len(str_1) != len(str_2):
+        is_not_measurable = True
+        print(f"{str_1} and {str_2} cannot be compared, for they are of different length.")
+        return is_not_measurable
+    else:
+        edits = 0
+        for i, ch in enumerate(str_1):
+            if str_2[i] != str_1[i]:
+                edits += 1
+    return edits
 
 # todo: add another string metric: string metrics like Damerau-Levenshtein,
 # Hamming distance, Jaro-Winkler and Strike a match.
@@ -91,18 +105,6 @@ def visualize_graph(tuples, triples):
     nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels)
     plt.savefig("bktree.png")
     plt.show()
-
-    # And another one
-    # T = nx.balanced_tree(2, 5)
-    #
-    # pos = graphviz_layout(T, prog="twopi")
-    # nx.draw(T, pos)
-    # plt.show()
-
-    # g = nx.DiGraph()
-    # g.add_weighted_edges_from(test_triples)
-    # p = nx.drawing.nx_pydot.to_pydot(g)
-    # p.write_png('example.png')
 
 
 def get_edge_labels(triples):
@@ -169,16 +171,17 @@ if __name__ == '__main__':
     filename = sys.argv[1]
     words = read_data_from_filename(filename)
     terminal_tree = BKTree(words)
-    #test_words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
     print(calculate_levenshtein_distance('help', 'loop'))
+    print(calculate_hamming_distance('can', 'man'))
     built_tree = test_tree.build_tree()
     print(test_tree.search_word('help', 1))
     test_triples = create_triple(built_tree)
     print(test_triples)
     tests_tuples = create_tuple(built_tree)
     print(tests_tuples)
+
 
     # Second stage: Visualize bk-tree as graph
     graph = visualize_graph(tests_tuples, test_triples)
