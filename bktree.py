@@ -11,11 +11,11 @@ import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
 
-class StringMetric:
-
-    def __init__(self, string_1, string_2):
-        self.string_1 = string_1
-        self.string_2 = string_2
+# class StringMetric:
+#
+#     def __init__(self, string_1, string_2):
+#         self.string_1 = string_1
+#         self.string_2 = string_2
 
 
 class Graph:
@@ -26,6 +26,9 @@ class Graph:
         self.triples = None
         self.labels = None
 
+    # def __getitem__(self, index: int):
+    #     return self[index]
+
     def create_triples(self):
         """
         Take in a nested tuple with a bk-tree structure and adapt it to
@@ -34,30 +37,32 @@ class Graph:
         to draw a graph visualization of the bk-tree structure.
         :return: list of labels
         """
-        triples = []
+        self.triples = []
         node_1 = self.tree[0]
         nested_element = self.tree[1]
         for distance in nested_element:
             node_2 = nested_element[distance][0]
             triple = node_1, node_2, distance
-            triples.append(triple)
+            self.triples.append(triple)
             new_tuple = nested_element[distance]
             if new_tuple[1]:
-                self.triples = triples + self.create_triples(new_tuple)
+                graph_tuple = Graph(new_tuple)
+                self.triples = self.triples + graph_tuple.create_triples()
 
         return self.triples
 
-    def create_tuple(self):
-        tuples = []
+    def create_tuples(self):
+        self.tuples = []
         node_1 = self.tree[0]
         nested_element = self.tree[1]
         for distance in nested_element:
             node_2 = nested_element[distance][0]
-            tuple = node_1, node_2
-            tuples.append(tuple)
+            _tuple = node_1, node_2
+            self.tuples.append(_tuple)
             new_tuple = nested_element[distance]
             if new_tuple[1]:
-                self.tuples = tuples + self.create_tuple(new_tuple)
+                graph_tuple = Graph(new_tuple)
+                self.tuples = self.tuples + graph_tuple.create_tuples()
 
         return self.tuples
 
@@ -197,7 +202,7 @@ if __name__ == '__main__':
     # Reformat data
     test_triples = tree_graph.create_triples()
     print(test_triples)
-    tests_tuples = tree_graph.create_tuple()
+    tests_tuples = tree_graph.create_tuples()
     print(tests_tuples)
     graph = tree_graph.visualize_graph()
 
