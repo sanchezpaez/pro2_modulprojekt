@@ -11,45 +11,12 @@ import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
 
-def calculate_levenshtein_distance(str_1, str_2) -> int:
-    """
-    The Levenshtein distance is a string metric that measures the difference
-    between two sequences. If two strings are similar, the distance should
-    be small. If they are very different, the distance should be large.
-    :rtype: int representing the minimum number of single-character edits
-    (insert, delete or replace) necessary to transform one word (string)
-    into another.
-    """
-    if str_1 == str_2:
-        edits = 0
-    elif not str_1:
-        edits = len(str_2)
-    elif not str_2:
-        edits = len(str_1)
-    else:
-        # Compute the minimal number of edits (insert, delete, or replace)
-        edits = min(calculate_levenshtein_distance(str_1, str_2[1:]) + 1,
-                    calculate_levenshtein_distance(str_1[1:], str_2) + 1,
-                    # If the characters are the same, we don't increase the edits, else we do by 1
-                    calculate_levenshtein_distance(str_1[1:], str_2[1:]) + (str_1[0] != str_2[0]))
-    return edits
+class StringMetric:
 
+    def __init__(self, string_1, string_2):
+        self.string_1 = string_1
+        self.string_2 = string_2
 
-def calculate_hamming_distance(str_1, str_2):
-    is_not_measurable = False
-    if len(str_1) != len(str_2):
-        is_not_measurable = True
-        print(f"{str_1} and {str_2} cannot be compared, for they are of different length.")
-        return is_not_measurable
-    else:
-        edits = 0
-        for i, ch in enumerate(str_1):
-            if str_2[i] != str_1[i]:
-                edits += 1
-    return edits
-
-# todo: add another string metric: string metrics like Damerau-Levenshtein,
-# Hamming distance, Jaro-Winkler and Strike a match.
 
 def read_data_from_filename(filename):
     with open(filename) as file:
@@ -122,9 +89,52 @@ def get_edge_labels(triples):
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
-        self.ld = calculate_levenshtein_distance
+        self.ld = self.calculate_levenshtein_distance
         self.root = wordlist[0]
         self.tree = (self.root, {})
+
+    def calculate_levenshtein_distance(self, string_1, string_2) -> int:
+        """
+        The Levenshtein distance is a string metric that measures the difference
+        between two sequences. If two strings are similar, the distance should
+        be small. If they are very different, the distance should be large.
+        :rtype: int representing the minimum number of single-character edits
+        (insert, delete or replace) necessary to transform one word (string)
+        into another.
+        """
+        if string_1 == string_2:
+            edits = 0
+        elif not string_1:
+            edits = len(string_2)
+        elif not string_2:
+            edits = len(string_1)
+        else:
+            # Compute the minimal number of edits (insert, delete, or replace)
+            edits = min(self.calculate_levenshtein_distance(string_1, string_2[1:]) + 1,
+                        self.calculate_levenshtein_distance(string_1[1:], string_2) + 1,
+                        # If the characters are the same, we don't increase the edits, else we do by 1
+                        self.calculate_levenshtein_distance(string_1[1:], string_2[1:]) + (string_1[0] != string_2[0]))
+        return edits
+
+    def calculate_hamming_distance(self, string_1, string_2):
+        """
+        If two strings are of the same length, calculate the
+        number of substitutions to turn one string into the
+        other.
+        :return: int representing number of substitutions.
+        """
+        is_not_measurable = False
+        if len(string_1) != len(string_2):
+            is_not_measurable = True
+            print(f"'{string_1}' and '{string_2}' cannot be compared,"
+                  f" for they are of different length.")
+            return is_not_measurable
+        else:
+            edits = 0
+            for i, ch in enumerate(string_1):
+                if string_2[i] != string_1[i]:
+                    edits += 1
+        return edits
 
     def build_tree(self):
         """Build BK Tree from list of strings."""
@@ -173,17 +183,17 @@ if __name__ == '__main__':
     terminal_tree = BKTree(words)
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
-    print(calculate_levenshtein_distance('help', 'loop'))
-    print(calculate_hamming_distance('can', 'man'))
+    print(test_tree.calculate_levenshtein_distance('help', 'loop'))
+    print(test_tree.calculate_hamming_distance('can', 'man'))
     built_tree = test_tree.build_tree()
     print(test_tree.search_word('help', 1))
+
+    # Second stage: Visualize bk-tree as graph
+    # Reformat data
     test_triples = create_triple(built_tree)
     print(test_triples)
     tests_tuples = create_tuple(built_tree)
     print(tests_tuples)
-
-
-    # Second stage: Visualize bk-tree as graph
     graph = visualize_graph(tests_tuples, test_triples)
 
     # Third stage: interactive mode (word query)
