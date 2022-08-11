@@ -5,10 +5,22 @@
 
 
 import sys
-
+import nltk
 import matplotlib.pyplot as plt
+from nltk.corpus import brown, reuters, words
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
+#nltk.download('reuters')
+
+# big_vocab = set(words.words())  # 235892
+# print(len(big_vocab))
+# vocab = brown.words()
+# print(len(vocab)) # 56057
+# vocab_reuters = reuters.words()
+# print(len(vocab_reuters)) # 41600
+# all_words = set(vocab + vocab_reuters)
+# print(len(all_words))  # 82092
+
 
 
 # class StringMetric:
@@ -149,34 +161,49 @@ class BKTree:
     def insert_word(self, node, word):
         """Insert a new word in the tree."""
         d = self.ld(word, node[0])
-        if d in node[1]:
-            self.insert_word(node[1][d], word)
+        distances = node[1]
+        if d in distances:
+            self.insert_word(distances[d], word)
         else:
-            node[1][d] = (word, {})
+            distances[d] = (word, {})
         return node
 
     def search_word(self, word, d):
         """
-        Find words within the specified edit distance (d)
+        Return all words within the specified edit distance (d)
         from the search word.
         """
 
         def search(node):
-            distance_to_root = self.ld(word, node[0])
+            distance = self.ld(word, node[0])
             matching_words = []
-            if distance_to_root <= d:
+            if distance <= d:
                 matching_words.append(node[0])
-            for i in range(distance_to_root - d, distance_to_root + d + 1):
+            # Recursively query every child node numbered between d-n and d+n (inclusive)
+            for i in range(distance - d, distance + d + 1):
                 children = node[1]
                 if i in children:
                     matching_words.extend(search(node[1][i]))
             return matching_words
+        return search(self.tree)
 
-        root = self.tree
-        return search(root)
+        # Version 2
+        # matching_words = []
+        # distance = self.ld(self.tree[0], word)
+        # if distance <= d:
+        #     matching_words.append(self.tree[0])
+        # for i in range(distance - d, distance + d + 1):
+        #     children = self.tree[1]
+        #     if str(i) in children:
+        #         matching_words.extend(self.search_word(str(i), d))
+        # return matching_words
 
     def status(self):
         number_of_words = len(self.wordlist)
+        print(f"The tree has {number_of_words} leaves (words).")
+        # height = length to the farthest leaf
+        # return number_of_words + height
+        # todo: calculate height and finish method
 
 
 def read_data_from_filename(filename):
@@ -184,18 +211,35 @@ def read_data_from_filename(filename):
         content = file.read().lower().split()
         return content
 
+def save_data(tokens, filename):
+    """Save tokens into file, separated by comma."""
+    with open(filename, "w") as file:
+        tokens_string = ",".join(tokens)
+        file.write(tokens_string)
+    return file
+
 
 if __name__ == '__main__':
     # First stage: read data from file and build bk tree
+    # Download and save wordlist
+    # wordlist = list(set(words.words()))
+    # save_data(wordlist, 'words_nltk.txt')
     filename = sys.argv[1]
     words = read_data_from_filename(filename)
-    terminal_tree = BKTree(words)
+    bk_tree = BKTree(words)
+    #print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
+    print(bk_tree.calculate_hamming_distance('can', 'man'))
+    built_tree = bk_tree.build_tree()
+    print(bk_tree.search_word('help', 1))
+    print(bk_tree.status())
+
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
     print(test_tree.calculate_levenshtein_distance('help', 'loop'))
     print(test_tree.calculate_hamming_distance('can', 'man'))
     built_tree = test_tree.build_tree()
     print(test_tree.search_word('help', 1))
+    print(test_tree.status())
 
     # Second stage: Visualize bk-tree as graph
     tree_graph = Graph(built_tree)
@@ -207,6 +251,9 @@ if __name__ == '__main__':
     graph = tree_graph.visualize_graph()
 
     # Third stage: interactive mode (word query)
-    user_input = input('Please enter a word query and the desired edit distance\n')
+    user_input = input('Please enter a word query and the desired edit distance threshold.\n')
     search_word = user_input.split()[0]
-    d = user_input.split()[1]
+    d = int(user_input.split()[1])
+    print(test_tree.search_word(search_word, d))
+    # import nltk
+    # nltk.download('brown')
