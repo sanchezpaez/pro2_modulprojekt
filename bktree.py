@@ -5,12 +5,16 @@
 
 
 import sys
-import nltk
+
 import matplotlib.pyplot as plt
-from nltk.corpus import brown, reuters, words
 import networkx as nx
+import numpy as np
 from networkx.drawing.nx_pydot import graphviz_layout
-#nltk.download('reuters')
+from nltk.corpus import words
+from tqdm import tqdm
+
+
+# nltk.download('reuters')
 
 # big_vocab = set(words.words())  # 235892
 # print(len(big_vocab))
@@ -20,7 +24,6 @@ from networkx.drawing.nx_pydot import graphviz_layout
 # print(len(vocab_reuters)) # 41600
 # all_words = set(vocab + vocab_reuters)
 # print(len(all_words))  # 82092
-
 
 
 # class StringMetric:
@@ -130,6 +133,23 @@ class BKTree:
                         self.calculate_levenshtein_distance(string_1[1:], string_2[1:]) + (string_1[0] != string_2[0]))
         return edits
 
+    def calculate_levenshtein_dynamic(self, string_1, string_2) -> int:
+        l1 = len(string_1)
+        l2 = len(string_2)
+        # Generate a matrix to store results
+        distance_matrix = np.zeros((l1 + 1, l2 + 1))
+        for i in range(l1 + 1):
+            for j in range(l2 + 1):
+                if i == 0:
+                    distance_matrix[i][j] = j
+                elif j == 0:
+                    distance_matrix[i][j] = i
+                elif string_1[i - 1] == string_2[j - 1]:
+                    distance_matrix[i][j] = distance_matrix[i - 1][j - 1]
+                else:
+                    distance_matrix[i][j] = 1 + min(distance_matrix[i][j - 1], distance_matrix[i - 1][j], distance_matrix[i - 1][j - 1])
+        return distance_matrix[l1][l2]
+
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
         """
@@ -153,9 +173,9 @@ class BKTree:
 
     def build_tree(self):
         """Build BK Tree from list of strings."""
-        for word in self.wordlist[1:]:
+        for word in tqdm(self.wordlist[1:]):
             self.tree = self.insert_word(self.tree, word)
-        print(self.tree)
+        # print(self.tree)
         return self.tree
 
     def insert_word(self, node, word):
@@ -185,6 +205,7 @@ class BKTree:
                 if i in children:
                     matching_words.extend(search(node[1][i]))
             return matching_words
+
         return search(self.tree)
 
         # Version 2
@@ -205,39 +226,63 @@ class BKTree:
         # return number_of_words + height
         # todo: calculate height and finish method
 
+    def save_tree(self, filename):
+        """
+        Save tree structure into file, so it does not
+        need to be calculated every time and can be loaded."""
+        with open(filename, "w") as file:
+            words_string = str(self.tree)
+            file.write(words_string)
+        return file
 
-def read_data_from_filename(filename):
-    with open(filename) as file:
-        content = file.read().lower().split()
-        return content
+def load_vocab(filename):
+    with open(filename, encoding='utf-8') as file:
+        text = file.read()  # Text as string
+        words = text.split(',')
+    return words
 
-def save_data(tokens, filename):
+def load_tree(filename):
+    with open(filename, encoding='utf-8') as file:
+        tree = file.read()  # Text as string
+    return tree
+
+
+def save_vocab(wordset, filename):
     """Save tokens into file, separated by comma."""
     with open(filename, "w") as file:
-        tokens_string = ",".join(tokens)
-        file.write(tokens_string)
+        words_string = ",".join(wordset)
+        file.write(words_string)
     return file
 
 
 if __name__ == '__main__':
     # First stage: read data from file and build bk tree
     # Download and save wordlist
-    # wordlist = list(set(words.words()))
-    # save_data(wordlist, 'words_nltk.txt')
+    wordlist = list(set(words.words()))
+    save_vocab(wordlist, 'words_nltk.txt')
     filename = sys.argv[1]
-    words = read_data_from_filename(filename)
+    words = load_vocab(filename)
     bk_tree = BKTree(words)
-    #print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
+    print(len(bk_tree.wordlist))
+    print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
     print(bk_tree.calculate_hamming_distance('can', 'man'))
-    built_tree = bk_tree.build_tree()
-    print(bk_tree.search_word('help', 1))
-    print(bk_tree.status())
+    # built_bk_tree = bk_tree.build_tree()
+    # print(bk_tree.search_word('help', 1))
+    # print(bk_tree.status())
 
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
     print(test_tree.calculate_levenshtein_distance('help', 'loop'))
+    print(test_tree.calculate_levenshtein_dynamic('help', 'loop'))
     print(test_tree.calculate_hamming_distance('can', 'man'))
     built_tree = test_tree.build_tree()
+    print(built_tree)
+    test_tree.save_tree('tree.txt')
+    # test_tree.tree = None
+    # new_tree = load_tree('tree.txt')
+    # print(new_tree)
+    # test_tree.tree = new_tree
+    # print(test_tree.tree)
     print(test_tree.search_word('help', 1))
     print(test_tree.status())
 

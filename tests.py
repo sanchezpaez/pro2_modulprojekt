@@ -25,6 +25,9 @@ class TestBKTree:
     def test_different_length_words(self):
         assert self.tree.calculate_levenshtein_distance('help', 'loop') == 3
 
+    def test_calculate_dynamic(self):
+        assert self.tree.calculate_levenshtein_dynamic('help', 'loop') == 3
+
     # class TestHamming:
 
     def test_different_length(self):
