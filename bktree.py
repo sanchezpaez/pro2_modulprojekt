@@ -137,17 +137,19 @@ class BKTree:
         l1 = len(string_1)
         l2 = len(string_2)
         # Generate a matrix to store results
-        distance_matrix = np.zeros((l1 + 1, l2 + 1))
-        for i in range(l1 + 1):
-            for j in range(l2 + 1):
-                if i == 0:
-                    distance_matrix[i][j] = j
-                elif j == 0:
-                    distance_matrix[i][j] = i
-                elif string_1[i - 1] == string_2[j - 1]:
-                    distance_matrix[i][j] = distance_matrix[i - 1][j - 1]
+        rows = l1 + 1
+        cols = l2 + 1
+        distance_matrix = np.zeros((rows, cols))
+        for r in range(rows):
+            for c in range(cols):
+                if r == 0:
+                    distance_matrix[r][c] = c
+                elif c == 0:
+                    distance_matrix[r][c] = r
+                elif string_1[r - 1] == string_2[c - 1]:
+                    distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
                 else:
-                    distance_matrix[i][j] = 1 + min(distance_matrix[i][j - 1], distance_matrix[i - 1][j], distance_matrix[i - 1][j - 1])
+                    distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1], distance_matrix[r - 1][c], distance_matrix[r - 1][c - 1])
         return distance_matrix[l1][l2]
 
     @staticmethod
