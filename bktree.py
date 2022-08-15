@@ -106,7 +106,7 @@ class Graph:
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
-        self.ld = self.calculate_levenshtein_distance
+        self.ld = self.calculate_levenshtein_dynamic
         self.root = wordlist[0]
         self.tree = (self.root, {})
 
@@ -149,8 +149,10 @@ class BKTree:
                 elif string_1[r - 1] == string_2[c - 1]:
                     distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
                 else:
-                    distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1], distance_matrix[r - 1][c], distance_matrix[r - 1][c - 1])
-        return distance_matrix[l1][l2]
+                    distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1],  # Insertion
+                                                    distance_matrix[r - 1][c],  # Deletion
+                                                    distance_matrix[r - 1][c - 1])  # Substitution
+        return int(distance_matrix[l1][l2])
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
@@ -268,9 +270,10 @@ if __name__ == '__main__':
     print(len(bk_tree.wordlist))
     print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
     print(bk_tree.calculate_hamming_distance('can', 'man'))
-    # built_bk_tree = bk_tree.build_tree()
-    # print(bk_tree.search_word('help', 1))
-    # print(bk_tree.status())
+    built_bk_tree = bk_tree.build_tree()
+    bk_tree.save_tree('bktree_nltk.txt')
+    print(bk_tree.search_word('help', 1))
+    print(bk_tree.status())
 
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
