@@ -277,7 +277,7 @@ def make_bktree_from_file(filename):
     dataset = File(filename)
     wordlist = dataset.load_vocab()
     bk_tree = BKTree(wordlist)
-    bk_tree.build_tree()
+    bk_tree.tree = bk_tree.build_tree()
     bk_tree.save_tree('bktree.txt')
     bk_tree.get_status()
     return bk_tree
@@ -286,24 +286,22 @@ def make_bktree_from_file(filename):
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         filename = sys.argv[1]
-        test_tree = make_bktree_from_file(filename)
-        print(test_tree.calculate_levenshtein_distance('help', 'loop'))
-        print(test_tree.calculate_levenshtein_dynamic('help', 'loop'))
-        print(test_tree.calculate_hamming_distance('can', 'man'))
-        built_tree = test_tree.build_tree()
-        print(built_tree)
-        # test_tree.status()
-        test_tree.save_tree('tree.txt')
+        demo_tree = make_bktree_from_file(filename)
+        print(demo_tree.calculate_levenshtein_distance('help', 'loop'))
+        print(demo_tree.calculate_levenshtein_dynamic('help', 'loop'))
+        print(demo_tree.calculate_hamming_distance('can', 'man'))
+        print(demo_tree.tree)
+        demo_tree.save_tree('demo_tree.txt')
         # test_tree.tree = None
         # new_tree = load_tree('tree.txt')
         # print(new_tree)
         # test_tree.tree = new_tree
         # print(test_tree.tree)
-        print(test_tree.search_word('help', 1))
-        print(test_tree.calculate_height(built_tree))
+        # print(test_tree.search_word('help', 1))
+        # print(test_tree.calculate_height(built_tree))
 
         # Second stage: Visualize bk-tree as graph
-        tree_graph = Graph(built_tree)
+        tree_graph = Graph(demo_tree.tree)
         # Reformat data
         test_triples = tree_graph.create_triples()
         print(test_triples)

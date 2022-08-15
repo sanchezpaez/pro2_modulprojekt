@@ -46,7 +46,7 @@ class TestBKTree:
 class TestGraph:
     words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
     tree = BKTree(words)
-    tree.build_tree()
+    tree.tree = tree.build_tree()
     print(tree)
     graph = Graph(tree.tree)
     graph.create_triples()
