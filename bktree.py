@@ -14,24 +14,6 @@ from nltk.corpus import words
 from tqdm import tqdm
 
 
-# nltk.download('reuters')
-
-# big_vocab = set(words.words())  # 235892
-# print(len(big_vocab))
-# vocab = brown.words()
-# print(len(vocab)) # 56057
-# vocab_reuters = reuters.words()
-# print(len(vocab_reuters)) # 41600
-# all_words = set(vocab + vocab_reuters)
-# print(len(all_words))  # 82092
-
-
-# class StringMetric:
-#
-#     def __init__(self, string_1, string_2):
-#         self.string_1 = string_1
-#         self.string_2 = string_2
-
 
 class Graph:
 
@@ -41,8 +23,7 @@ class Graph:
         self.triples = None
         self.labels = None
 
-    # def __getitem__(self, index: int):
-    #     return self[index]
+
 
     def create_triples(self):
         """
@@ -103,32 +84,10 @@ class Graph:
         plt.show()
 
 
-def calculate_levenshtein_dynamic(string_1, string_2) -> int:
-    l1 = len(string_1)
-    l2 = len(string_2)
-    # Generate a matrix to store results
-    rows = l1 + 1
-    cols = l2 + 1
-    distance_matrix = np.zeros((rows, cols))
-    for r in range(rows):
-        for c in range(cols):
-            if r == 0:
-                distance_matrix[r][c] = c
-            elif c == 0:
-                distance_matrix[r][c] = r
-            elif string_1[r - 1] == string_2[c - 1]:
-                distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
-            else:
-                distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1],  # Insertion
-                                                distance_matrix[r - 1][c],  # Deletion
-                                                distance_matrix[r - 1][c - 1])  # Substitution
-    return int(distance_matrix[l1][l2])
-
-
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
-        self.ld = calculate_levenshtein_dynamic
+        self.ld = self.calculate_levenshtein_dynamic
         self.root = wordlist[0]
         self.tree = (self.root, {})
 
@@ -201,7 +160,6 @@ class BKTree:
         """Build BK Tree from list of strings."""
         for word in tqdm(self.wordlist[1:]):
             self.tree = self.insert_word(self.tree, word)
-        # print(self.tree)
         return self.tree
 
     def insert_word(self, node, word):
@@ -267,7 +225,7 @@ class BKTree:
             print('The height is 0.')
             #todo: write Exception
 
-    def status(self):
+    def get_status(self):
         """
         Return size and height of tree, being size the number
         of leaves, and height the number of nodes on the
@@ -275,7 +233,8 @@ class BKTree:
         """
         number_of_words = len(self.wordlist)
         print(f"The tree has {number_of_words} leaves (words).")
-        height = self.calculate_height(self.root)
+        #height = self.calculate_height(self.root)
+        height = self.calculate_height(self.tree)
         print(f"The height of the tree is {height}.")
         # tree.tree = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
         #                         4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
@@ -289,11 +248,7 @@ class BKTree:
             file.write(words_string)
         return file
 
-def load_vocab(filename):
-    with open(filename, encoding='utf-8') as file:
-        text = file.read()  # Text as string
-        words = text.split(',')
-    return words
+
 
 def load_tree(filename):
     with open(filename, encoding='utf-8') as file:
@@ -308,13 +263,70 @@ def save_vocab(wordset, filename):
         file.write(words_string)
     return file
 
+class File:
+    def __init__(self, filename):
+        self.filename = filename
+
+    def load_vocab(self):
+        with open(self.filename, encoding='utf-8') as file:
+            text = file.read()  # Text as string
+            words = text.split(',')
+        return words
+
+def make_bktree_from_file(filename):
+    dataset = File(filename)
+    wordlist = dataset.load_vocab()
+    bk_tree = BKTree(wordlist)
+    bk_tree.build_tree()
+    bk_tree.save_tree('bktree.txt')
+    bk_tree.get_status()
+    return bk_tree
+
 
 if __name__ == '__main__':
-    # First stage: read data from file and build bk tree
+    if len(sys.argv) == 2:
+        filename = sys.argv[1]
+        test_tree = make_bktree_from_file(filename)
+        print(test_tree.calculate_levenshtein_distance('help', 'loop'))
+        print(test_tree.calculate_levenshtein_dynamic('help', 'loop'))
+        print(test_tree.calculate_hamming_distance('can', 'man'))
+        built_tree = test_tree.build_tree()
+        print(built_tree)
+        # test_tree.status()
+        test_tree.save_tree('tree.txt')
+        # test_tree.tree = None
+        # new_tree = load_tree('tree.txt')
+        # print(new_tree)
+        # test_tree.tree = new_tree
+        # print(test_tree.tree)
+        print(test_tree.search_word('help', 1))
+        print(test_tree.calculate_height(built_tree))
+
+        # Second stage: Visualize bk-tree as graph
+        tree_graph = Graph(built_tree)
+        # Reformat data
+        test_triples = tree_graph.create_triples()
+        print(test_triples)
+        tests_tuples = tree_graph.create_tuples()
+        print(tests_tuples)
+        graph = tree_graph.visualize_graph()
+
+        # Third stage: interactive mode (word query)
+        user_input = input('Please enter a word query and the desired edit distance threshold.\n')
+        search_word = user_input.split()[0]
+        d = int(user_input.split()[1])
+        print(test_tree.search_word(search_word, d))
+        # import nltk
+        # nltk.download('brown')
+    else:
+        print('Not possible')
+        #todo: raise Exception
+
     # Download and save wordlist
     # wordlist = sorted(list(set(words.words())))
     # save_vocab(wordlist, 'words_nltk.txt')
     # filename = sys.argv[1]
+
     # words = load_vocab(filename)
     # bk_tree = BKTree(words)
     # print(len(bk_tree.wordlist))
@@ -325,36 +337,5 @@ if __name__ == '__main__':
     # print(bk_tree.search_word('help', 1))
     # print(bk_tree.status())
 
-    test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
-    test_tree = BKTree(test_words)
-    print(test_tree.calculate_levenshtein_distance('help', 'loop'))
-    print(calculate_levenshtein_dynamic('help', 'loop'))
-    print(test_tree.calculate_hamming_distance('can', 'man'))
-    built_tree = test_tree.build_tree()
-    print(built_tree)
-    #test_tree.status()
-    test_tree.save_tree('tree.txt')
-    # test_tree.tree = None
-    # new_tree = load_tree('tree.txt')
-    # print(new_tree)
-    # test_tree.tree = new_tree
-    # print(test_tree.tree)
-    print(test_tree.search_word('help', 1))
-    print(test_tree.calculate_height(built_tree))
+    # First stage: read data from file and build bk tree
 
-    # Second stage: Visualize bk-tree as graph
-    tree_graph = Graph(built_tree)
-    # Reformat data
-    test_triples = tree_graph.create_triples()
-    print(test_triples)
-    tests_tuples = tree_graph.create_tuples()
-    print(tests_tuples)
-    graph = tree_graph.visualize_graph()
-
-    # Third stage: interactive mode (word query)
-    user_input = input('Please enter a word query and the desired edit distance threshold.\n')
-    search_word = user_input.split()[0]
-    d = int(user_input.split()[1])
-    print(test_tree.search_word(search_word, d))
-    # import nltk
-    # nltk.download('brown')
