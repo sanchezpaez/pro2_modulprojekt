@@ -103,10 +103,32 @@ class Graph:
         plt.show()
 
 
+def calculate_levenshtein_dynamic(string_1, string_2) -> int:
+    l1 = len(string_1)
+    l2 = len(string_2)
+    # Generate a matrix to store results
+    rows = l1 + 1
+    cols = l2 + 1
+    distance_matrix = np.zeros((rows, cols))
+    for r in range(rows):
+        for c in range(cols):
+            if r == 0:
+                distance_matrix[r][c] = c
+            elif c == 0:
+                distance_matrix[r][c] = r
+            elif string_1[r - 1] == string_2[c - 1]:
+                distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
+            else:
+                distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1],  # Insertion
+                                                distance_matrix[r - 1][c],  # Deletion
+                                                distance_matrix[r - 1][c - 1])  # Substitution
+    return int(distance_matrix[l1][l2])
+
+
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
-        self.ld = self.calculate_levenshtein_dynamic
+        self.ld = calculate_levenshtein_dynamic
         self.root = wordlist[0]
         self.tree = (self.root, {})
 
@@ -223,12 +245,40 @@ class BKTree:
         #         matching_words.extend(self.search_word(str(i), d))
         # return matching_words
 
+    def max(self, number_1, number_2):
+        """Return greater value."""
+        if (number_1 > number_2):
+            return number_1
+        else:
+            return number_2
+
+    def calculate_height(self, node):
+        """Calculate the longest path from root to leaf."""
+        if self.tree:
+            children = node[1]
+            height = 0
+            for i in children:
+                # print(children[i])
+                # print(i)
+                # Search children nodes recursively
+                height = self.max(self.calculate_height(children[i]), height)
+            return height + 1
+        else:
+            print('The height is 0.')
+            #todo: write Exception
+
     def status(self):
+        """
+        Return size and height of tree, being size the number
+        of leaves, and height the number of nodes on the
+        longest path from root to leaf.
+        """
         number_of_words = len(self.wordlist)
         print(f"The tree has {number_of_words} leaves (words).")
-        # height = length to the farthest leaf
-        # return number_of_words + height
-        # todo: calculate height and finish method
+        height = self.calculate_height(self.root)
+        print(f"The height of the tree is {height}.")
+        # tree.tree = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
+        #                         4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
 
     def save_tree(self, filename):
         """
@@ -262,26 +312,27 @@ def save_vocab(wordset, filename):
 if __name__ == '__main__':
     # First stage: read data from file and build bk tree
     # Download and save wordlist
-    wordlist = list(set(words.words()))
-    save_vocab(wordlist, 'words_nltk.txt')
-    filename = sys.argv[1]
-    words = load_vocab(filename)
-    bk_tree = BKTree(words)
-    print(len(bk_tree.wordlist))
-    print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
-    print(bk_tree.calculate_hamming_distance('can', 'man'))
-    built_bk_tree = bk_tree.build_tree()
-    bk_tree.save_tree('bktree_nltk.txt')
-    print(bk_tree.search_word('help', 1))
-    print(bk_tree.status())
+    # wordlist = sorted(list(set(words.words())))
+    # save_vocab(wordlist, 'words_nltk.txt')
+    # filename = sys.argv[1]
+    # words = load_vocab(filename)
+    # bk_tree = BKTree(words)
+    # print(len(bk_tree.wordlist))
+    # print(bk_tree.calculate_levenshtein_distance('help', 'loop'))
+    # print(bk_tree.calculate_hamming_distance('can', 'man'))
+    # built_bk_tree = bk_tree.build_tree()
+    # bk_tree.save_tree('bktree_nltk.txt')
+    # print(bk_tree.search_word('help', 1))
+    # print(bk_tree.status())
 
     test_words = ["help", "hell", "hello", "loop", "helps", "troop", "shell", "helper"]
     test_tree = BKTree(test_words)
     print(test_tree.calculate_levenshtein_distance('help', 'loop'))
-    print(test_tree.calculate_levenshtein_dynamic('help', 'loop'))
+    print(calculate_levenshtein_dynamic('help', 'loop'))
     print(test_tree.calculate_hamming_distance('can', 'man'))
     built_tree = test_tree.build_tree()
     print(built_tree)
+    #test_tree.status()
     test_tree.save_tree('tree.txt')
     # test_tree.tree = None
     # new_tree = load_tree('tree.txt')
@@ -289,7 +340,7 @@ if __name__ == '__main__':
     # test_tree.tree = new_tree
     # print(test_tree.tree)
     print(test_tree.search_word('help', 1))
-    print(test_tree.status())
+    print(test_tree.calculate_height(built_tree))
 
     # Second stage: Visualize bk-tree as graph
     tree_graph = Graph(built_tree)

@@ -10,7 +10,7 @@ from bktree import BKTree, Graph
 class TestBKTree:
     words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
     tree = BKTree(words)
-    tree.build_tree()
+    built_tree = tree.build_tree()
 
     def test_search_word(self):
         assert self.tree.search_word('book', 1) == ['book', 'books', 'boo', 'boon', 'cook']
@@ -38,6 +38,9 @@ class TestBKTree:
 
     def test_same_length_many(self):
         assert self.tree.calculate_hamming_distance('miracle', 'milagro') == 4
+
+    def test_calculate_height(self):
+        assert self.tree.calculate_height(self.built_tree) == 4
 
 
 class TestGraph:
