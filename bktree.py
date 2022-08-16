@@ -260,6 +260,33 @@ class BKTree:
             file.write(words_string)
         return file
 
+    def make_graph_from_tree(self):
+        # Build graph from tree
+        tree_graph = Graph(self.tree)
+        # Plot graph
+        tree_graph.visualize_graph()
+
+    def interactive_mode_search_word(self):
+        user_input = input('Please enter a word query and the desired edit distance threshold separated by a space .\n')
+        if user_input:
+            if len(user_input) == 1:
+                print('You need to type a word followed by an integer number.')
+                #todo: raise Exc
+            else:
+                search_word = user_input.split()[0]
+                number = user_input.split()[1]
+                if not search_word.isalpha():
+                    print('That is not an actual word.')
+                    #todo: exception, isinstance
+                if isinstance(int(number), int):
+                    d = int(number)
+                else:
+                    print('That is not a number.')
+                self.search_word(search_word, d)
+        else:
+            #todo: raise Exception
+            sys.exit()
+
 
 
 def load_tree(filename):
@@ -294,17 +321,9 @@ def make_bktree_from_file(filename):
     bk_tree.get_status()
     return bk_tree
 
-def make_graph_from_tree(tree):
-    # Build graph from tree
-    tree_graph = Graph(tree.tree)
-    # Plot graph
-    tree_graph.visualize_graph()
 
-def interactive_mode_search_word(tree):
-    user_input = input('Please enter a word query and the desired edit distance threshold.\n')
-    search_word = user_input.split()[0]
-    d = int(user_input.split()[1])
-    tree.search_word(search_word, d)
+
+
 
 
 if __name__ == '__main__':
@@ -316,14 +335,10 @@ if __name__ == '__main__':
         demo_tree.print_hamming_distance('can', 'man')
 
         # Second stage: Visualize bk-tree as graph
-        graph = make_graph_from_tree(demo_tree)
+        graph = demo_tree.make_graph_from_tree()
 
         # Third stage: interactive mode (word query)
-        user_input = input('Please enter a word query and the desired edit distance threshold.\n')
-        search_word = user_input.split()[0]
-        d = int(user_input.split()[1])
-        print(demo_tree.search_word(search_word, d))
-
+        demo_tree.interactive_mode_search_word()
 
         # test_tree.tree = None
         # new_tree = load_tree('tree.txt')
