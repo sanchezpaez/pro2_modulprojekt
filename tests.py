@@ -4,11 +4,12 @@
 # Datum: 31.07.2022
 
 
-from bktree import BKTree, Graph
+from bk_tree import BKTree
+from graph import Graph
 
 
 class TestBKTree:
-    words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
+    words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
     tree = BKTree(words)
     built_tree = tree.build_tree()
 
@@ -17,15 +18,12 @@ class TestBKTree:
 
     # class TestLevenshtein:
     def test_distance_0(self):
-        assert self.tree.calculate_levenshtein_distance('man', 'man') == 0
+        assert self.tree.calculate_levenshtein_dynamic('man', 'man') == 0
 
     def test_distance_empty_string(self):
-        assert self.tree.calculate_levenshtein_distance('', 'man') == 3
+        assert self.tree.calculate_levenshtein_dynamic('', 'man') == 3
 
     def test_different_length_words(self):
-        assert self.tree.calculate_levenshtein_distance('help', 'loop') == 3
-
-    def test_calculate_dynamic(self):
         assert self.tree.calculate_levenshtein_dynamic('help', 'loop') == 3
 
     # class TestHamming:
@@ -44,20 +42,24 @@ class TestBKTree:
 
 
 class TestGraph:
-    words = ["book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart"]
+    words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
     tree = BKTree(words)
     tree.tree = tree.build_tree()
-    print(tree)
     graph = Graph(tree.tree)
-    graph.create_triples()
-    graph.create_tuples()
+    graph.get_edge_labels()
 
-    def test_create_triple(self):
-        # tree.tree = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
-        #                         4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
-        assert self.graph.create_triples() == [
-            ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1), ('boo', 'cook', 2), ('book', 'cake', 4),
-            ('cake', 'cake', 0), ('cake', 'cape', 1), ('cake', 'cart', 2)
+    def test_create_triples(self):
+        assert self.graph.triples == [
+            ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1),
+            ('boo', 'cook', 2), ('book', 'cake', 4), ('cake', 'cape', 1),
+            ('cake', 'cart', 2)
+        ]
+
+    def test_create_tuples(self):
+        assert self.graph.tuples == [
+            ('book', 'books'), ('books', 'boo'), ('boo', 'boon'),
+            ('boo', 'cook'), ('book', 'cake'), ('cake', 'cape'),
+            ('cake', 'cart')
         ]
 
     def test_visualize_graph(self):
@@ -73,13 +75,8 @@ class TestGraph:
         assert self.graph.visualize_graph() == 0
 
     def test_get_edge_labels(self):
-        test_triples = [
-            ('book', 'books', 1), ('books', 'boo', 2), ('boo', 'boon', 1),
-            ('boo', 'cook', 2), ('book', 'cake', 4), ('cake', 'cake', 0),
-            ('cake', 'cape', 1), ('cake', 'cart', 2)
-        ]
         assert self.graph.get_edge_labels() == {
             ('book', 'books'): 1, ('books', 'boo'): 2, ('boo', 'boon'): 1,
-            ('boo', 'cook'): 2, ('book', 'cake'): 4, ('cake', 'cake'): 0,
+            ('boo', 'cook'): 2, ('book', 'cake'): 4,
             ('cake', 'cape'): 1, ('cake', 'cart'): 2
         }
