@@ -19,9 +19,9 @@ class Graph:
 
     def __init__(self, tree):
         self.tree = tree
-        self.tuples = None
-        self.triples = None
-        self.labels = None
+        self.tuples = self.create_tuples()
+        self.triples = self.create_triples()
+        self.labels = self.get_edge_labels()
 
 
 
@@ -76,11 +76,11 @@ class Graph:
     def visualize_graph(self):
         tree_graph = nx.DiGraph()
         tree_graph.add_edges_from(self.tuples)
+        # This layout draws the directed graph in a hierarchical way
         positions = graphviz_layout(tree_graph, prog='dot')
         nx.draw_networkx(tree_graph, pos=positions, node_size=1500, arrows=True)
-        edge_labels = self.get_edge_labels()
-        nx.draw_networkx_edge_labels(tree_graph, pos=positions, edge_labels=edge_labels)
-        plt.savefig("bktree.png")
+        nx.draw_networkx_edge_labels(tree_graph, pos=positions, edge_labels=self.get_edge_labels())
+        plt.savefig("bk_tree.png")
         plt.show()
 
 
@@ -114,7 +114,8 @@ class BKTree:
                         self.calculate_levenshtein_distance(string_1[1:], string_2[1:]) + (string_1[0] != string_2[0]))
         return edits
 
-    def calculate_levenshtein_dynamic(self, string_1, string_2) -> int:
+    @staticmethod
+    def calculate_levenshtein_dynamic(string_1, string_2) -> int:
         l1 = len(string_1)
         l2 = len(string_2)
         # Generate a matrix to store results
@@ -134,6 +135,10 @@ class BKTree:
                                                     distance_matrix[r - 1][c],  # Deletion
                                                     distance_matrix[r - 1][c - 1])  # Substitution
         return int(distance_matrix[l1][l2])
+
+    def print_levenshtein_distance(self, string_1, string_2):
+        lev_dist = self.calculate_levenshtein_dynamic(string_1, string_2)
+        print(f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
@@ -155,6 +160,11 @@ class BKTree:
                 if string_2[i] != string_1[i]:
                     edits += 1
         return edits
+
+    @staticmethod  # classmethod??
+    def print_hamming_distance(string_1, string_2):
+        hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
+        print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
 
     def build_tree(self):
         """Build BK Tree from list of strings."""
@@ -189,8 +199,12 @@ class BKTree:
                 if i in children:
                     matching_words.extend(search(node[1][i]))
             return matching_words
-
-        return search(self.tree)
+        if search(self.tree):
+            print(f"The most similar words to {word} are: {search(self.tree)}")
+        else:
+            print(f"No words in the list match your query.")
+            #todo: raise Exception
+        return search(self.tree)  # get rid of empty list
 
         # Version 2
         # matching_words = []
@@ -216,8 +230,6 @@ class BKTree:
             children = node[1]
             height = 0
             for i in children:
-                # print(children[i])
-                # print(i)
                 # Search children nodes recursively
                 height = self.max(self.calculate_height(children[i]), height)
             return height + 1
@@ -282,16 +294,37 @@ def make_bktree_from_file(filename):
     bk_tree.get_status()
     return bk_tree
 
+def make_graph_from_tree(tree):
+    # Build graph from tree
+    tree_graph = Graph(tree.tree)
+    # Plot graph
+    tree_graph.visualize_graph()
+
+def interactive_mode_search_word(tree):
+    user_input = input('Please enter a word query and the desired edit distance threshold.\n')
+    search_word = user_input.split()[0]
+    d = int(user_input.split()[1])
+    tree.search_word(search_word, d)
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         filename = sys.argv[1]
+        # First stage: read data from file and build bk tree
         demo_tree = make_bktree_from_file(filename)
-        print(demo_tree.calculate_levenshtein_distance('help', 'loop'))
-        print(demo_tree.calculate_levenshtein_dynamic('help', 'loop'))
-        print(demo_tree.calculate_hamming_distance('can', 'man'))
-        print(demo_tree.tree)
-        demo_tree.save_tree('demo_tree.txt')
+        demo_tree.print_levenshtein_distance('help', 'loop')
+        demo_tree.print_hamming_distance('can', 'man')
+
+        # Second stage: Visualize bk-tree as graph
+        graph = make_graph_from_tree(demo_tree)
+
+        # Third stage: interactive mode (word query)
+        user_input = input('Please enter a word query and the desired edit distance threshold.\n')
+        search_word = user_input.split()[0]
+        d = int(user_input.split()[1])
+        print(demo_tree.search_word(search_word, d))
+
+
         # test_tree.tree = None
         # new_tree = load_tree('tree.txt')
         # print(new_tree)
@@ -299,23 +332,6 @@ if __name__ == '__main__':
         # print(test_tree.tree)
         # print(test_tree.search_word('help', 1))
         # print(test_tree.calculate_height(built_tree))
-
-        # Second stage: Visualize bk-tree as graph
-        tree_graph = Graph(demo_tree.tree)
-        # Reformat data
-        test_triples = tree_graph.create_triples()
-        print(test_triples)
-        tests_tuples = tree_graph.create_tuples()
-        print(tests_tuples)
-        graph = tree_graph.visualize_graph()
-
-        # Third stage: interactive mode (word query)
-        user_input = input('Please enter a word query and the desired edit distance threshold.\n')
-        search_word = user_input.split()[0]
-        d = int(user_input.split()[1])
-        print(test_tree.search_word(search_word, d))
-        # import nltk
-        # nltk.download('brown')
     else:
         print('Not possible')
         #todo: raise Exception
@@ -335,5 +351,5 @@ if __name__ == '__main__':
     # print(bk_tree.search_word('help', 1))
     # print(bk_tree.status())
 
-    # First stage: read data from file and build bk tree
+
 
