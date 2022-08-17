@@ -84,17 +84,14 @@ class BKTree:
                 elif c == 0:
                     distance_matrix[r][c] = r
                 elif string_1[r - 1] == string_2[c - 1]:
-                    # If the characters are equal there is no cost
-                    distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
+                    cost = 0
                 else:
-                    # If an edit operation is needed, we need to add a cost of one to the calculation
-                    distance_matrix[r][c] = 1 + min(
-                                                distance_matrix[r][c - 1] + 1,  # Insertion
+                    cost = 1
+                    distance_matrix[r][c] = min(distance_matrix[r][c - 1] + 1,  # Insertion
                                                 distance_matrix[r - 1][c] + 1,  # Deletion
-                                                distance_matrix[r - 1][c - 1]  # Substitution
-                                                )
-                    if r and c and string_1[r - 1] == string_2[c - 2] and string_1[r - 2] == string_2[c - 1]:
-                        distance_matrix[r][c] = 1 + min(distance_matrix[r][c], distance_matrix[r - 2, c - 2])  # transposition
+                                                distance_matrix[r - 1][c - 1] + cost)  # Substitution
+                if r and c and string_1[r - 1] == string_2[c - 2] and string_1[r - 2] == string_2[c - 1]:
+                    distance_matrix[r][c] = min(distance_matrix[r][c], distance_matrix[r - 2, c - 2] + cost)  # transposition
         return int(distance_matrix[l1][l2])
 
     @staticmethod
