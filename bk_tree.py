@@ -8,6 +8,7 @@ import numpy as np
 from tqdm import tqdm
 from graph import Graph
 
+
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
@@ -63,6 +64,38 @@ class BKTree:
     def print_levenshtein_distance(self, string_1, string_2):
         lev_dist = self.calculate_levenshtein_dynamic(string_1, string_2)
         print(f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
+
+    @staticmethod
+    def calculate_damerau_levenshtein(string_1, string_2) -> int:
+        """
+        Like the Levenstein Distance, computing transpositions
+        (swapping of adjacent symbols) as well.
+        """
+        l1 = len(string_1)
+        l2 = len(string_2)
+        # Generate a matrix to store results
+        rows = l1 + 1
+        cols = l2 + 1
+        distance_matrix = np.zeros((rows, cols))
+        for r in range(rows):
+            for c in range(cols):
+                if r == 0:
+                    distance_matrix[r][c] = c
+                elif c == 0:
+                    distance_matrix[r][c] = r
+                elif string_1[r - 1] == string_2[c - 1]:
+                    # If the characters are equal there is no cost
+                    distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
+                else:
+                    # If an edit operation is needed, we need to add a cost of one to the calculation
+                    distance_matrix[r][c] = 1 + min(
+                                                distance_matrix[r][c - 1] + 1,  # Insertion
+                                                distance_matrix[r - 1][c] + 1,  # Deletion
+                                                distance_matrix[r - 1][c - 1]  # Substitution
+                                                )
+                    if r and c and string_1[r - 1] == string_2[c - 2] and string_1[r - 2] == string_2[c - 1]:
+                        distance_matrix[r][c] = 1 + min(distance_matrix[r][c], distance_matrix[r - 2, c - 2])  # transposition
+        return int(distance_matrix[l1][l2])
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
