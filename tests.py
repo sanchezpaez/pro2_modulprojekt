@@ -33,8 +33,8 @@ class TestBKTree:
 
     # TestDamerau:
     def test_damerau_levenshtein(self):
-        assert self.tree.calculate_damerau_levenshtein('abcdef', 'abcfad') == 2
         assert self.tree.calculate_damerau_levenshtein('ab', 'ba') == 1
+        assert self.tree.calculate_damerau_levenshtein('abcdef', 'abcfad') == 2
 
     # TestHamming:
     def test_different_length(self):
