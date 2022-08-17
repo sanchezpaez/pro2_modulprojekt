@@ -31,6 +31,11 @@ class TestBKTree:
     def test_different_length_words(self):
         assert self.tree.calculate_levenshtein_dynamic('help', 'loop') == 3
 
+    # TestDamerau:
+    def test_damerau_levenshtein(self):
+        assert self.tree.calculate_damerau_levenshtein('abcdef', 'abcfad') == 2
+        assert self.tree.calculate_damerau_levenshtein('ab', 'ba') == 1
+
     # TestHamming:
     def test_different_length(self):
         assert True == self.tree.calculate_hamming_distance('book', 'books')
