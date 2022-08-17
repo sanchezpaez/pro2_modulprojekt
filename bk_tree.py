@@ -2,6 +2,7 @@
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
 # Datum: 31.07.2022
+import sys
 
 import numpy as np
 from tqdm import tqdm
