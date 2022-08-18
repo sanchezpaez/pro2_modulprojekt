@@ -17,11 +17,13 @@ class File:
             words = text.split(',')
         return words
 
-    def make_bktree_from_file(self):
+    def make_bktree_from_file(self, is_loaded=False):
         wordlist = self.load_vocab()
         bk_tree = BKTree(wordlist)
-        bk_tree.tree = bk_tree.build_tree()
-        bk_tree.save_tree('bktree.pkl')
-        bk_tree.load_tree('bktree.pkl')
+        if is_loaded:
+            bk_tree.build_tree(is_loaded=True)
+        #bk_tree.save_tree('bktree.pkl')
+        else:
+            bk_tree.tree = bk_tree.build_tree()
         bk_tree.get_status()
         return bk_tree

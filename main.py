@@ -10,7 +10,7 @@ from bk_tree import BKTree
 from file import File
 
 
-def main(file, dam_lev=False, hamming=False, visualise_tree=False):
+def main(file, dam_lev=False, hamming=False, visualise_tree=False, loaded_tree=False):
     """
     Shows the tree visualization and all relevant metric distances.
     :param file:
@@ -20,7 +20,10 @@ def main(file, dam_lev=False, hamming=False, visualise_tree=False):
     """
     # First stage: read data from file and build bk tree
     dataset = File(file)
-    demo_tree = dataset.make_bktree_from_file()
+    if loaded_tree:
+        demo_tree = dataset.make_bktree_from_file(is_loaded=True)
+    else:
+        demo_tree = dataset.make_bktree_from_file()
     demo_tree.print_levenshtein_distance('help', 'loop')
     if dam_lev:
         demo_tree.print_damerau_levenshtein('cab', 'abc')
@@ -78,6 +81,6 @@ if __name__ == '__main__':
             compute_hamming = hamming_flag == '-h'
         except IndexError:
             compute_hamming = False
-        main(filename, compute_dam_lev, compute_hamming, visualise)
+        main(filename, compute_dam_lev, compute_hamming, visualise, loaded_tree=True)
         #demo_with_loaded_tree()
 

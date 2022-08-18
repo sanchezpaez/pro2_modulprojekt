@@ -125,10 +125,15 @@ class BKTree:
         hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
         print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
 
-    def build_tree(self):
+    def build_tree(self, is_loaded=False):
         """Build BK Tree from list of strings."""
-        for word in tqdm(self.wordlist[1:]):
-            self.tree = self.insert_word(self.tree, word)
+        if is_loaded:
+            self.tree = self.load_tree('bktree.pkl')
+        else:
+            for word in tqdm(self.wordlist[1:]):
+                self.tree = self.insert_word(self.tree, word)
+                self.save_tree('bktree.pkl')
+        print(type(self.tree))
         return self.tree
 
     def insert_word(self, node, word):
