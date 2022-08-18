@@ -7,6 +7,7 @@ import sys
 import numpy as np
 from tqdm import tqdm
 from graph import Graph
+import pickle
 
 
 class BKTree:
@@ -89,11 +90,15 @@ class BKTree:
                 else:
                     # In all other cases the cost is 1, added to the calculation
                     distance_matrix[r][c] = 1 + min(
-                                            distance_matrix[r][c - 1],  # Insertion
-                                            distance_matrix[r - 1][c],  # Deletion
-                                            distance_matrix[r - 1][c - 1],
-                                            distance_matrix[r - 2, c - 2])  # Substitution
+                        distance_matrix[r][c - 1],  # Insertion
+                        distance_matrix[r - 1][c],  # Deletion
+                        distance_matrix[r - 1][c - 1],
+                        distance_matrix[r - 2, c - 2])  # Substitution
         return int(distance_matrix[l1][l2])
+
+    def print_damerau_levenshtein(self, string_1, string_2):
+        dam_lev_dist = self.calculate_damerau_levenshtein(string_1, string_2)
+        print(f"The Damerau Levenshtein distance between '{string_1}' and '{string_2}' is {dam_lev_dist}.")
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
@@ -211,16 +216,22 @@ class BKTree:
         """
         Save tree structure into file, so it does not
         need to be calculated every time and can be loaded."""
-        with open(filename, "w") as file:
-            words_string = str(self.tree)
-            file.write(words_string)
-        return file
+        # with open(filename, "w") as file:
+        #     words_string = str(self.tree)
+        #     file.write(words_string)
+        # return file
+        with open(filename, "wb") as file:
+            pickle.dump(self.tree, file)
 
     def load_tree(self, filename):
         """Load pre-saved tree structure as self.tree."""
-        with open(filename, encoding='utf-8') as file:
-            self.tree = file.read()
-        return self.tree
+        # with open(filename, encoding='utf-8') as file:
+        #     self.tree = file.read()
+        # return self.tree
+        with open(filename, "rb") as file:
+            output = pickle.load(file)
+            self.tree = output
+            return self.tree
 
     def make_graph_from_tree(self):
         # Build graph from tree
@@ -231,10 +242,7 @@ class BKTree:
     def interactive_mode_search_word(self):
         user_input = input('Please enter a word query and the desired edit distance threshold separated by a space .\n')
         if user_input:
-            if len(user_input) == 1:
-                print('You need to type a word followed by an integer number.')
-                # todo: raise Exc
-            else:
+            try:
                 search_word = user_input.split()[0]
                 number = user_input.split()[1]
                 if not search_word.isalpha():
@@ -245,6 +253,8 @@ class BKTree:
                 else:
                     print('That is not a number.')
                 self.search_word(search_word, d)
+            except IndexError:
+                print('You need to type a word followed by an integer number.')
         else:
             # todo: raise Exception
             sys.exit()

@@ -14,6 +14,6 @@ def save_vocab(word_set, filename):
     return file
 
 
-# Download and save wordlist
+# Download and save list of unique 235892 words from nltk.words()
 wordlist = sorted(list(set(words.words())))
 save_vocab(wordlist, 'words_nltk.txt')

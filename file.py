@@ -21,6 +21,7 @@ class File:
         wordlist = self.load_vocab()
         bk_tree = BKTree(wordlist)
         bk_tree.tree = bk_tree.build_tree()
-        bk_tree.save_tree('bktree.txt')
+        bk_tree.save_tree('bktree.pkl')
+        bk_tree.load_tree('bktree.pkl')
         bk_tree.get_status()
         return bk_tree
