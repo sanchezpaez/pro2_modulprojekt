@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 
+
 class Graph:
 
     def __init__(self, tree):

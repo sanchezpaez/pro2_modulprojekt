@@ -23,13 +23,13 @@ class TestBKTree:
 
     # TestLevenshtein:
     def test_distance_0(self):
-        assert self.tree.calculate_levenshtein_dynamic('man', 'man') == 0
+        assert self.tree.calculate_levenshtein_distance('man', 'man') == 0
 
     def test_distance_empty_string(self):
-        assert self.tree.calculate_levenshtein_dynamic('', 'man') == 3
+        assert self.tree.calculate_levenshtein_distance('', 'man') == 3
 
     def test_different_length_words(self):
-        assert self.tree.calculate_levenshtein_dynamic('help', 'loop') == 3
+        assert self.tree.calculate_levenshtein_distance('help', 'loop') == 3
 
     # TestDamerau:
     def test_damerau_levenshtein(self):

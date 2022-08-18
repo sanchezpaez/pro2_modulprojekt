@@ -6,13 +6,14 @@
 
 import sys
 
-from bk_tree import BKTree
 from file import File
 
 
 def main(file, dam_lev=False, hamming=False, visualise_tree=False, loaded_tree=False):
     """
     Shows the tree visualization and all relevant metric distances.
+    :param loaded_tree:
+    :param visualise_tree:
     :param file:
     :param dam_lev:
     :param hamming:
@@ -31,39 +32,17 @@ def main(file, dam_lev=False, hamming=False, visualise_tree=False, loaded_tree=F
         demo_tree.print_hamming_distance('can', 'man')
 
     if visualise_tree:
-    # Second stage: Visualize bk-tree as graph
+        # Second stage: Visualize bk-tree as graph
         demo_tree.make_graph_from_tree()
 
     # Third stage: interactive mode (word query)
     demo_tree.interactive_mode_search_word()
 
-def demo_with_loaded_tree(file):
-    """
-    Loads built tree to speed up process and is more effective to find similar words.
-    Skip visualization for it is too large to display.
-    :param file:
-    :param dam_lev:
-    :param hamming:
-    :return:
-    """
-    # First stage: read data from file and build bk tree
-    dataset = File(file)
-    wordlist = dataset.load_vocab()
-    bk_tree = BKTree(wordlist)
-    bk_tree.ld = bk_tree.calculate_levenshtein_dynamic
-    bk_tree.root = wordlist[0]
-    bk_tree.tree = bk_tree.load_tree('demo_tree.pkl')
-    print(bk_tree.tree)
-    print(type(bk_tree.tree))
-    bk_tree.calculate_height(bk_tree.tree)
-
-    # Third stage: interactive mode (word query)
-    bk_tree.interactive_mode_search_word()
-
 
 if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print('You need a minimum of two arguments (name of .py file and name of .txt file) and a maximum of 4 (flags '
+        print('You need a minimum of two arguments (name of .py file'
+              ' and name of .txt file) and a maximum of 4 (flags '
               'to calculate Damerau-Levenshtein and Hamming distance).')
         # todo: raise Exception
     else:
@@ -82,5 +61,3 @@ if __name__ == '__main__':
         except IndexError:
             compute_hamming = False
         main(filename, compute_dam_lev, compute_hamming, visualise, loaded_tree=True)
-        #demo_with_loaded_tree()
-

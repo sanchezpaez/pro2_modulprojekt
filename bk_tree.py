@@ -2,6 +2,7 @@
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
 # Datum: 31.07.2022
+
 import sys
 
 import numpy as np
@@ -13,11 +14,12 @@ import pickle
 class BKTree:
     def __init__(self, wordlist):
         self.wordlist = wordlist
-        self.ld = self.calculate_levenshtein_dynamic
+        self.ld = self.calculate_levenshtein_distance
         self.root = wordlist[0]
         self.tree = (self.root, {})
 
-    def calculate_levenshtein_distance(self, string_1, string_2) -> int:
+    @staticmethod
+    def calculate_levenshtein_distance(string_1, string_2) -> int:
         """
         The Levenshtein distance is a string metric that measures the difference
         between two sequences. If two strings are similar, the distance should
@@ -26,22 +28,6 @@ class BKTree:
         (insert, delete or replace) necessary to transform one word (string)
         into another.
         """
-        if string_1 == string_2:
-            edits = 0
-        elif not string_1:
-            edits = len(string_2)
-        elif not string_2:
-            edits = len(string_1)
-        else:
-            # Compute the minimal number of edits (insert, delete, or replace)
-            edits = min(self.calculate_levenshtein_distance(string_1, string_2[1:]) + 1,
-                        self.calculate_levenshtein_distance(string_1[1:], string_2) + 1,
-                        # If the characters are the same, we don't increase the edits, else we do by 1
-                        self.calculate_levenshtein_distance(string_1[1:], string_2[1:]) + (string_1[0] != string_2[0]))
-        return edits
-
-    @staticmethod
-    def calculate_levenshtein_dynamic(string_1, string_2) -> int:
         l1 = len(string_1)
         l2 = len(string_2)
         # Generate a matrix to store results
@@ -55,15 +41,18 @@ class BKTree:
                 elif c == 0:
                     distance_matrix[r][c] = r
                 elif string_1[r - 1] == string_2[c - 1]:
+                    # If the characters are the same, we don't increase the edits
                     distance_matrix[r][c] = distance_matrix[r - 1][c - 1]
                 else:
+                    # Else we do by 1
+                    # Compute the minimal number of edits (insert, delete, or replace)
                     distance_matrix[r][c] = 1 + min(distance_matrix[r][c - 1],  # Insertion
                                                     distance_matrix[r - 1][c],  # Deletion
                                                     distance_matrix[r - 1][c - 1])  # Substitution
         return int(distance_matrix[l1][l2])
 
     def print_levenshtein_distance(self, string_1, string_2):
-        lev_dist = self.calculate_levenshtein_dynamic(string_1, string_2)
+        lev_dist = self.calculate_levenshtein_distance(string_1, string_2)
         print(f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
 
     @staticmethod
@@ -92,8 +81,8 @@ class BKTree:
                     distance_matrix[r][c] = 1 + min(
                         distance_matrix[r][c - 1],  # Insertion
                         distance_matrix[r - 1][c],  # Deletion
-                        distance_matrix[r - 1][c - 1],
-                        distance_matrix[r - 2, c - 2])  # Substitution
+                        distance_matrix[r - 1][c - 1],  # Substitution
+                        distance_matrix[r - 2, c - 2])  # Transposition
         return int(distance_matrix[l1][l2])
 
     def print_damerau_levenshtein(self, string_1, string_2):
@@ -120,7 +109,7 @@ class BKTree:
                     edits += 1
         return edits
 
-    @staticmethod  # classmethod??
+    @staticmethod
     def print_hamming_distance(string_1, string_2):
         hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
         print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
@@ -171,17 +160,6 @@ class BKTree:
             # todo: raise Exception
         return search(self.tree)  # get rid of empty list
 
-        # Version 2
-        # matching_words = []
-        # distance = self.ld(self.tree[0], word)
-        # if distance <= d:
-        #     matching_words.append(self.tree[0])
-        # for i in range(distance - d, distance + d + 1):
-        #     children = self.tree[1]
-        #     if str(i) in children:
-        #         matching_words.extend(self.search_word(str(i), d))
-        # return matching_words
-
     @staticmethod
     def max(number_1, number_2):
         """Return greater value."""
@@ -214,25 +192,16 @@ class BKTree:
         # height = self.calculate_height(self.root)
         height = self.calculate_height(self.tree)
         print(f"The height of the tree is {height}.")
-        # tree.tree = ('book', {1: ('books', {2: ('boo', {1: ('boon', {}), 2: ('cook', {})})}),
-        #                         4: ('cake', {0: ('cake', {}), 1: ('cape', {}), 2: ('cart', {})})})
 
     def save_tree(self, filename):
         """
         Save tree structure into file, so it does not
         need to be calculated every time and can be loaded."""
-        # with open(filename, "w") as file:
-        #     words_string = str(self.tree)
-        #     file.write(words_string)
-        # return file
         with open(filename, "wb") as file:
             pickle.dump(self.tree, file)
 
     def load_tree(self, filename):
         """Load pre-saved tree structure as self.tree."""
-        # with open(filename, encoding='utf-8') as file:
-        #     self.tree = file.read()
-        # return self.tree
         with open(filename, "rb") as file:
             output = pickle.load(file)
             self.tree = output
@@ -245,7 +214,8 @@ class BKTree:
         tree_graph.visualize_graph()
 
     def interactive_mode_search_word(self):
-        user_input = input('Please enter a word query and the desired edit distance threshold separated by a space .\n')
+        user_input = input('Please enter a word query and the'
+                           ' desired edit distance threshold separated by a space .\n')
         if user_input:
             try:
                 search_word = user_input.split()[0]
