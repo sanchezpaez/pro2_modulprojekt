@@ -15,7 +15,7 @@ words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
 
 
 class TestBKTree:
-    tree = BKTree(words)
+    tree = BKTree(words, 'words')
     built_tree = tree.build_tree()
 
     def test_search_word(self):
@@ -51,7 +51,7 @@ class TestBKTree:
 
 
 class TestGraph:
-    tree = BKTree(words)
+    tree = BKTree(words, 'words')
     tree.tree = tree.build_tree()
     graph = Graph(tree.tree)
     graph.get_edge_labels()

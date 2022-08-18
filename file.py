@@ -24,7 +24,8 @@ class File:
     def make_bktree_from_file(self, is_loaded=False):
         try:
             wordlist = self.load_vocab()
-            bk_tree = BKTree(wordlist)
+            name = self.filename
+            bk_tree = BKTree(wordlist, name)
             if is_loaded:
                 bk_tree.build_tree(is_loaded=True)
             else:

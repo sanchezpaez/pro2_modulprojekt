@@ -48,7 +48,11 @@ if __name__ == '__main__':
     else:
         filename = sys.argv[1]
         visualise = True
-        if filename == 'words_nltk.txt':
+        with open (filename, encoding='utf-8') as file:
+            text = file.read()
+            words = text.split(',')
+        # If the list contains too many words (>25) the tree will be too big for visualisation)
+        if len(words) > 25:
             visualise = False
         try:
             damerau_levenshtein_flag = sys.argv[2]

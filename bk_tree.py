@@ -12,11 +12,13 @@ import pickle
 
 
 class BKTree:
-    def __init__(self, wordlist):
+    def __init__(self, wordlist, name):
         self.wordlist = wordlist
+        self.name = name
         self.ld = self.calculate_levenshtein_distance
         self.root = wordlist[0]
         self.tree = (self.root, {})
+
 
     @staticmethod
     def calculate_levenshtein_distance(string_1, string_2) -> int:
@@ -117,11 +119,11 @@ class BKTree:
     def build_tree(self, is_loaded=False):
         """Build BK Tree from list of strings."""
         if is_loaded:
-            self.tree = self.load_tree('bktree.pkl')
+            self.tree = self.load_tree(str(self.name) + '.pkl')
         else:
             for word in tqdm(self.wordlist[1:]):
                 self.tree = self.insert_word(self.tree, word)
-                self.save_tree('bktree.pkl')
+                self.save_tree(str(self.name) + '.pkl')
         print(type(self.tree))
         return self.tree
 
