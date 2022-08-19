@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 31.07.2022
-
+# Datum: 19.08.2022
 
 from bk_tree import BKTree
 from exception import NotATextFileError
 
 
 class File:
-    def __init__(self, filename):
+    """This class reads a .txt file and makes an instance of BKTree."""
+
+    def __init__(self, filename: str):
         self.filename = filename
 
-    def load_vocab(self):
+    def load_vocab(self) -> list:
+        """Read .txt file and return list of words."""
         if str(self.filename).endswith('.txt'):
             with open(self.filename, encoding='utf-8') as file:
                 text = file.read()
@@ -22,6 +24,12 @@ class File:
             raise NotATextFileError()
 
     def make_bktree_from_file(self, is_loaded=False):
+        """
+        Use wordlist to instantiate and build BKTree.
+        :param is_loaded: if True, skip the build_tree step
+        and load pre-saved BKTree.tree.
+        :return: BKTree
+        """
         try:
             wordlist = self.load_vocab()
             name = self.filename
@@ -34,4 +42,3 @@ class File:
             return bk_tree
         except NotATextFileError:
             pass
-

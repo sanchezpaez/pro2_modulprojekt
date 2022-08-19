@@ -1,24 +1,30 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 31.07.2022
+# Datum: 19.08.2022
 
+import pickle
 import sys
 
 import numpy as np
 from tqdm import tqdm
+
 from graph import Graph
-import pickle
 
 
 class BKTree:
+    """
+    Class that instantiates a BKTree from a list of words, which can
+    also be visualised when transformed into an instance of Graph.
+    The static methods calculate the relevant string metrics.
+    Other main methods are build_tree(), search_word and make_graph_from_tree.
+    """
     def __init__(self, wordlist, name):
         self.wordlist = wordlist
-        self.name = name
+        self.name = name  # It is needed to generate posterior files
         self.ld = self.calculate_levenshtein_distance
         self.root = wordlist[0]
         self.tree = (self.root, {})
-
 
     @staticmethod
     def calculate_levenshtein_distance(string_1, string_2) -> int:
@@ -116,19 +122,29 @@ class BKTree:
         hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
         print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
 
-    def build_tree(self, is_loaded=False):
-        """Build BK Tree from list of strings."""
+    def build_tree(self, is_loaded=False) -> tuple:
+        """
+        Build BK Tree from list of strings.
+        :param is_loaded: if True, a pre-saved self.tree is loaded, else
+        a new self.tree structure is built
+        :rtype tuple
+        """
         if is_loaded:
             self.tree = self.load_tree(str(self.name) + '.pkl')
         else:
             for word in tqdm(self.wordlist[1:]):
                 self.tree = self.insert_word(self.tree, word)
+                # Use self.name to generate .pkl file name
                 self.save_tree(str(self.name) + '.pkl')
-        print(type(self.tree))
         return self.tree
 
-    def insert_word(self, node, word):
-        """Insert a new word in the tree."""
+    def insert_word(self, node, word) -> tuple:
+        """
+        Insert a new word in the tree by using levenshtein distance.
+        :param node: tuple, the tree to which the leaf will be added.
+        :parameter word: str, the leaf which will be added to the tree.
+        :rtype tuple, the new node resulting of adding one word.
+        """
         d = self.ld(word, node[0])
         distances = node[1]
         if d in distances:
@@ -137,10 +153,13 @@ class BKTree:
             distances[d] = (word, {})
         return node
 
-    def search_word(self, word, d):
+    def search_word(self, word, d) -> list:
         """
         Return all words within the specified edit distance (d)
         from the search word.
+        :param word: str
+        :param d: int with the desired threshold
+        :rtype list with all the matching words (strings)
         """
 
         def search(node):
@@ -191,18 +210,17 @@ class BKTree:
         """
         number_of_words = len(self.wordlist)
         print(f"The tree has {number_of_words} leaves (words).")
-        # height = self.calculate_height(self.root)
         height = self.calculate_height(self.tree)
         print(f"The height of the tree is {height}.")
 
     def save_tree(self, filename):
         """
-        Save tree structure into file, so it does not
+        Save tree structure into file_name (.pkl file), so it does not
         need to be calculated every time and can be loaded."""
         with open(filename, "wb") as file:
             pickle.dump(self.tree, file)
 
-    def load_tree(self, filename):
+    def load_tree(self, filename) -> tuple:
         """Load pre-saved tree structure as self.tree."""
         with open(filename, "rb") as file:
             output = pickle.load(file)
@@ -210,12 +228,20 @@ class BKTree:
             return self.tree
 
     def make_graph_from_tree(self):
+        """Instantiate Graph from BKTree and plot graphic."""
         # Build graph from tree
         tree_graph = Graph(self.tree)
         # Plot graph
         tree_graph.visualize_graph()
 
     def interactive_mode_search_word(self):
+        """
+        use self.search_word() in interactive mode by
+        asking for a user's input. The user will see the matching
+        words on the screen.
+        Handle typing errors and exit program if user does not type
+        anything.
+        """
         user_input = input('Please enter a word query and the'
                            ' desired edit distance threshold separated by a space .\n')
         if user_input:

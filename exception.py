@@ -1,17 +1,8 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 31.07.2022
-
-import logging
-
-logger = logging.getLogger()
-logging.basicConfig(level=logging.INFO)
+# Datum: 19.08.2022
 
 
 class NotATextFileError(Exception):
-    pass
-    #logger.warning('This is not a .txt file!')
-
-
-
+    print('This is not a .txt file_name!')

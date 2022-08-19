@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 31.07.2022
+# Datum: 19.08.2022
 
 
 import networkx as nx
