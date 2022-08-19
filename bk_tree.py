@@ -9,6 +9,7 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
+from exception import NoWordsMatchedError, EmptyTreeError, EmptyListError, NotAWordError
 from graph import Graph
 
 
@@ -23,8 +24,13 @@ class BKTree:
         self.wordlist = wordlist
         self.name = name  # It is needed to generate posterior files
         self.ld = self.calculate_levenshtein_distance
-        self.root = wordlist[0]
-        self.tree = (self.root, {})
+        if wordlist:
+            self.root = wordlist[0]
+            self.tree = (self.root, {})
+        else:
+            self.root = ''
+            self.tree = None
+
 
     @staticmethod
     def calculate_levenshtein_distance(string_1, string_2) -> int:
@@ -177,9 +183,8 @@ class BKTree:
         if search(self.tree):
             print(f"The most similar words to {word} are: {search(self.tree)}")
         else:
-            print(f"No words in the list match your query.")
-            # todo: raise Exception
-        return search(self.tree)  # get rid of empty list
+            raise NoWordsMatchedError
+        return search(self.tree)
 
     @staticmethod
     def max(number_1, number_2):
@@ -196,11 +201,14 @@ class BKTree:
             height = 0
             for i in children:
                 # Search children nodes recursively
-                height = self.max(self.calculate_height(children[i]), height)
+                try:
+                    height = self.max(self.calculate_height(children[i]), height)
+                except EmptyTreeError:
+                    print('The height is 0.')
             return height + 1
         else:
-            print('The height is 0.')
-            # todo: write Exception
+            children = {}
+            raise EmptyTreeError
 
     def get_status(self):
         """
@@ -246,18 +254,22 @@ class BKTree:
                            ' desired edit distance threshold separated by a space .\n')
         if user_input:
             try:
-                search_word = user_input.split()[0]
-                number = user_input.split()[1]
-                if not search_word.isalpha():
+                try:
+                    search_word = user_input.split()[0]
+                    number = user_input.split()[1]
+                    if not search_word.isalpha():
+                        raise NotAWordError
+                    if isinstance(int(number), int):
+                        d = int(number)
+                    else:
+                        print('That is not a number.')
+                    try:
+                        self.search_word(search_word, d)
+                    except NoWordsMatchedError:
+                        print("No words in the list match your query.")
+                except NotAWordError:
                     print('That is not an actual word.')
-                    # todo: exception, isinstance
-                if isinstance(int(number), int):
-                    d = int(number)
-                else:
-                    print('That is not a number.')
-                self.search_word(search_word, d)
             except IndexError:
                 print('You need to type a word followed by an integer number.')
         else:
-            # todo: raise Exception
             sys.exit()

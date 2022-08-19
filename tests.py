@@ -5,10 +5,12 @@
 
 
 import networkx as nx
+import unittest
 from networkx import DiGraph
 from networkx.drawing.nx_pydot import graphviz_layout
 
 from bk_tree import BKTree
+from exception import NoWordsMatchedError, NotATextFileError, EmptyTreeError, EmptyListError, NotAWordError
 from file import File
 from graph import Graph
 
@@ -53,11 +55,7 @@ class TestBKTree:
     def test_calculate_height(self):
         assert self.tree.calculate_height(self.tree.tree) == 4
 
-
     # Test search_word
-
-    def test_search_word_no_matches(self):
-        assert self.tree.search_word('hedgehog', 1) == []
 
     def test_search_word_no_distance(self):
         assert self.tree.search_word('book', 0) == ['book']
@@ -129,3 +127,25 @@ class TestGraph:
             'boon': (28.597, 18.0), 'cook': (103.6, 18.0), 'cake': (142.6, 162.0),
             'cape': (139.6, 90.0), 'cart': (211.6, 90.0)
         }
+
+
+class MyTestCase(unittest.TestCase):
+    dataset = File('demo_words')
+    tree = BKTree(words, 'words')
+    built_tree = tree.build_tree()
+    empty_list = []
+    empty_tree = BKTree(empty_list, 'empty')
+    empty_tree.build_tree()
+
+    def test_search_word_no_matches_error(self):
+        with self.assertRaises(NoWordsMatchedError):
+            self.tree.search_word('hedgehog', 1)
+
+    def test_not_text_file_error(self):
+        with self.assertRaises(NotATextFileError):
+            self.dataset.load_vocab()
+
+    def test_empty_list_error(self):
+        with self.assertRaises(EmptyTreeError):
+            self.empty_tree.calculate_height(self.empty_tree.root)
+

@@ -2,91 +2,89 @@
 
 This is the repository for the PRO2 SoSe22 module project.
 
-## Getting started
+Installation and functionality description
+=======================
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Intro
+-------
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+This directory contains an implementation of the BK Tree.
 
-## Add your files
+The program has three main parts, called from `main()`. It first takes the name of the word list from the command line, reads the list and builds a BK tree (`make_bktree_from_file()`), which is based on  the Levenshtein distance calculation. An example of the Levenshtein distance calculation is printed by default. Flags to show other string metrics (Damerau-Levenshtein or Hamming) are also available. At the end of this first phase, the status of the tree is printed out, indicating number of leaves and height.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+The second phase (`make_graph_from_tree()`) is optional and depends on the number of leaves. When the list is of manageable size, the BK tree is transformed into a graph, which will be plotted.
+
+Finally, the program goes on interactive mode (`interactive_mode_search_word()`) to allow the user to enter a word query, for which they will also need to specify the desired distance threshold. That means, for a word query 'car' and an edit distance of 1, words like 'cat', 'can' or 'bat', for example, would be matched.
+
+
+The directory contains:
+
+* `main.py`
+* `file.py`
+* `bk_tree.py`
+* `graph.py`
+* `exception.py`
+* `vocabulary.py`
+* `tests.py`
+* `requirements.txt`
+* `demo_words.txt`
+* `words_nltk.txt`
+* `words_2.pkl`
+* `README.md`(this file)
+
+
+2. Installation
+-------
+
+1) Clone the repository.
+
+2) Using your terminal navigate through your computer to find the directory were you cloned the repository. Then from Terminal (look for 'Terminal' on Spotlight), or CMD for Windows,  set your working directory to that of your folder (for example: cd Desktop/pro2_modulprojekt_sanchezpaez).
+
+3) Required packages:
+
+* matplotlib==3.5.1
+* networkx==2.8.4
+* nltk==3.7
+* numpy==1.21.5
+* tqdm==4.64.0
+
+If you don't have pip installed follow the installing instructions here: https://pip.pypa.io/en/stable/installation/
+
+Run pip install -r requirements.txt (Python 2), or pip3 install -r requirements.txt (Python 3)
+
+
+4) You should be able to run the script now. Check first how you can run python on your computer (it can be 'python' or 'python3').
+
+For a mini-demo go to the command line and type the following:
 
 ```
-cd existing_repo
-git remote add origin https://gitup.uni-potsdam.de/sanchezpaez/pro2_modulprojekt_sanchezpaez.git
-git branch -M main
-git push -uf origin main
+python main.py demo_words.txt
 ```
 
-## Integrate with your tools
+You can use flags to show other string metrics, e.g. Damerau_Levenshtein distance Hamming distance:
 
-- [ ] [Set up project integrations](https://gitup.uni-potsdam.de/sanchezpaez/pro2_modulprojekt_sanchezpaez/-/settings/integrations)
+```
+python main.py demo_words.txt -dl -h
+```
 
-## Collaborate with your team
+For an extended demo you can use the nltk wordlist by typing this on the command line:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```
+python main.py words_nltk.txt
+```
+Again, the same flags are available for other string metrics.
+Note that when using large word lists, the visualisation part is not available, for it is imposible to represent a large tree on a normal-sized screen.
 
-## Test and Deploy
+In posterior calls of `main()`, it is possible to use the param loaded_tree (`loaded_tree=True`) to skip the `build_tree()` stage and load a pre_saved tree structure.
 
-Use the built-in continuous integration in GitLab.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+5) To run the tests:
 
-***
+All tests are in the `tests.py` file, and are organised in classes corresponding to the main classes in the program, including exception classes.
 
-# Editing this README
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+3. Contact information
+-------
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+If you have any questions or problems during they installation process, feel free to email sandrasanchezp@hotmail.com
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
