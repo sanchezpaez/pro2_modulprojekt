@@ -4,13 +4,14 @@
 # Datum: 19.08.2022
 
 
-import networkx as nx
 import unittest
+
+import networkx as nx
 from networkx import DiGraph
 from networkx.drawing.nx_pydot import graphviz_layout
 
 from bk_tree import BKTree
-from exception import NoWordsMatchedError, NotATextFileError, EmptyTreeError, EmptyListError, NotAWordError
+from exception import NoWordsMatchedError, NotATextFileError, EmptyTreeError
 from file import File
 from graph import Graph
 
@@ -36,7 +37,8 @@ class TestFile:
         )
 
     def test_make_bktree_from_file_tree_loaded(self):
-        assert self.dataset.make_bktree_from_file().tree == self.dataset.make_bktree_from_file(is_loaded=True).tree
+        assert self.dataset.make_bktree_from_file().tree \
+               == self.dataset.make_bktree_from_file(is_loaded=True).tree
 
 
 class TestBKTree:
@@ -148,4 +150,3 @@ class MyTestCase(unittest.TestCase):
     def test_empty_list_error(self):
         with self.assertRaises(EmptyTreeError):
             self.empty_tree.calculate_height(self.empty_tree.root)
-
