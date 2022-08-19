@@ -5,4 +5,5 @@
 
 
 class NotATextFileError(Exception):
-    print('This is not a .txt file_name!')
+    pass
+    # print('This is not a .txt file_name!')

@@ -41,28 +41,30 @@ def main(file_name, dam_lev=False, hamming=False, visualise_tree=False, loaded_t
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or len(sys.argv) > 4:
+    try:
+        filename = sys.argv[1]
+        visualise = True
+        try:
+            with open(filename, encoding='utf-8') as file:
+                text = file.read()
+                words = text.split(',')
+            # If the list is too long the tree will be too big for visualisation
+            if len(words) > 25:
+                visualise = False
+            try:
+                damerau_levenshtein_flag = sys.argv[2]
+                compute_dam_lev = damerau_levenshtein_flag == '-dl'
+            except IndexError:
+                compute_dam_lev = False
+            try:
+                hamming_flag = sys.argv[3]
+                compute_hamming = hamming_flag == '-h'
+            except IndexError:
+                compute_hamming = False
+            main(filename, compute_dam_lev, compute_hamming, visualise, loaded_tree=True)
+        except FileNotFoundError:
+            print('That file name does not exist.')
+    except IndexError:
         print('You need a minimum of two arguments (name of .py file_name'
               ' and name of .txt file_name) and a maximum of 4 (flags '
               'to calculate Damerau-Levenshtein and Hamming distance).')
-        # todo: raise Exception
-    else:
-        filename = sys.argv[1]
-        visualise = True
-        with open(filename, encoding='utf-8') as file:
-            text = file.read()
-            words = text.split(',')
-        # If the list is too long the tree will be too big for visualisation
-        if len(words) > 25:
-            visualise = False
-        try:
-            damerau_levenshtein_flag = sys.argv[2]
-            compute_dam_lev = damerau_levenshtein_flag == '-dl'
-        except IndexError:
-            compute_dam_lev = False
-        try:
-            hamming_flag = sys.argv[3]
-            compute_hamming = hamming_flag == '-h'
-        except IndexError:
-            compute_hamming = False
-        main(filename, compute_dam_lev, compute_hamming, visualise, loaded_tree=True)
