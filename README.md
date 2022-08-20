@@ -67,6 +67,9 @@ You can use flags to show other string metrics, e.g. Damerau_Levenshtein distanc
 python main.py demo_words.txt -dl -h
 ```
 
+![Captura_de_pantalla_2022-08-20_a_las_19.24.08](https://gitup.uni-potsdam.de/sanchezpaez/pro2_modulprojekt_sanchezpaez/uploads/0fa1813d9724814170745f4f8e7eae3c/Captura_de_pantalla_2022-08-20_a_las_19.24.08.png)
+
+
 For an extended demo you can use the nltk wordlist by typing this on the command line:
 
 ```
@@ -75,12 +78,16 @@ python main.py words_nltk.txt
 Again, the same flags are available for other string metrics.
 Note that when using large word lists, the visualisation part is not available, for it is imposible to represent a large tree on a normal-sized screen.
 
+![bk_tree](https://gitup.uni-potsdam.de/sanchezpaez/pro2_modulprojekt_sanchezpaez/uploads/2431ed447285b18a8e3e6e0b2ee61b62/bk_tree.png)
+
+
+
 In posterior calls of `main()`, it is possible to use the param loaded_tree (`loaded_tree=True`) to skip the `build_tree()` stage and load a pre_saved tree structure.
 
 
 5) To run the tests:
 
-All tests are in the `tests.py` file, and are organised in classes corresponding to the main classes in the program, including exception classes.
+All tests are in the `tests.py` file, and are organised in classes corresponding to the main classes in the program, including exception classes. They can be run all at once, individually or by class directly from Pycharm.
 
 
 3. Contact information
