@@ -33,7 +33,7 @@ The directory contains:
 * `README.md`(this file)
 
 
-2. Installation
+2. Installation and use
 -------
 
 1) Clone the repository.
@@ -68,6 +68,7 @@ python main.py demo_words.txt -dl -h
 ```
 
 ![Captura_de_pantalla_2022-08-20_a_las_19.24.08](https://gitup.uni-potsdam.de/sanchezpaez/pro2_modulprojekt_sanchezpaez/uploads/0fa1813d9724814170745f4f8e7eae3c/Captura_de_pantalla_2022-08-20_a_las_19.24.08.png)
+
 
 
 For an extended demo you can use the nltk wordlist by typing this on the command line:
