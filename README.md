@@ -47,13 +47,14 @@ The directory contains:
 * nltk==3.7
 * numpy==1.21.5
 * tqdm==4.64.0
+* pydot==1.4.2
 
 If you don't have pip installed follow the installing instructions here: https://pip.pypa.io/en/stable/installation/
 
-Run pip install -r requirements.txt (Python 2), or pip3 install -r requirements.txt (Python 3)
+Run pip install -r requirements.txt (Python 2), or pip3 install -r requirements.txt (Python 3). The Python version you need is 3.10.
 
 
-4) You should be able to run the script now. Check first how you can run python on your computer (it can be 'python' or 'python3').
+4) You should be able to run the script now. Check first how you can run python on your computer (it can be 'python' or 'python3'). 
 
 For a mini-demo go to the command line and type the following:
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 19.08.2022
+# Datum: 21.08.2022
+
 import sys
 
 from file import File
