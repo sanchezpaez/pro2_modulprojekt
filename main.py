@@ -61,7 +61,7 @@ if __name__ == '__main__':
                 compute_hamming = hamming_flag == '-h'
             except IndexError:
                 compute_hamming = False
-            main(filename, compute_dam_lev, compute_hamming, visualise, loaded_tree=True)
+            main(filename, compute_dam_lev, compute_hamming, visualise)
         except FileNotFoundError:
             print('That file name does not exist.')
     except IndexError:
