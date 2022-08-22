@@ -52,19 +52,20 @@ if __name__ == '__main__':
             if len(words) > 25:
                 visualise = False
             try:
-                damerau_levenshtein_flag = sys.argv[2]
-                compute_dam_lev = damerau_levenshtein_flag == '-dl'
-            except IndexError:
-                compute_dam_lev = False
-            try:
-                loaded_tree_flag = sys.argv[3]
+                loaded_tree_flag = sys.argv[2]
                 load_tree = loaded_tree_flag == '-t'
             except IndexError:
                 load_tree = False
+            try:
+                damerau_levenshtein_flag = sys.argv[3]
+                compute_dam_lev = damerau_levenshtein_flag == '-dl'
+            except IndexError:
+                compute_dam_lev = False
             main(filename, compute_dam_lev, load_tree, visualise)
         except FileNotFoundError:
             print(f"File '{filename}' does not exist.")
     except IndexError:
         print('You need a minimum of two arguments (name of .py file_name'
               ' and name of .txt file_name) and a maximum of 4 (flags '
-              'to calculate Damerau-Levenshtein and Hamming distance).')
+              'to calculate Damerau-Levenshtein and to load '
+              'pre-saved tree).')
