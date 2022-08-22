@@ -233,6 +233,7 @@ class BKTree:
         with open(filename, "rb") as file:
             output = pickle.load(file)
             self.tree = output
+            print('Loading pre-saved tree...')
             return self.tree
 
     def make_graph_from_tree(self):
