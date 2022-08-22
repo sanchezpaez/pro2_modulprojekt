@@ -27,12 +27,14 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
     if presaved:
         demo_tree = dataset.make_bktree_from_file(is_loaded=True)
     else:
-        demo_tree = dataset.make_bktree_from_file()
+        if dam_lev:
+            print('Building a BK Tree based on Damerau Levenshtein distance...')
+            demo_tree = dataset.make_bktree_from_file(dam_lev=True)
+        else:
+            demo_tree = dataset.make_bktree_from_file()
     # The program always shows an example of Levenshtein distance.
     # The other metrics are optional
     demo_tree.print_levenshtein_distance('help', 'loop')
-    if dam_lev:
-        demo_tree.print_damerau_levenshtein('cab', 'abc')
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
         demo_tree.make_graph_from_tree()

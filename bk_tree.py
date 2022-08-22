@@ -128,7 +128,7 @@ class BKTree:
         hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
         print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
 
-    def build_tree(self, is_loaded=False) -> tuple:
+    def build_tree(self, is_loaded=False, dam_lev=False) -> tuple:
         """
         Build BK Tree from list of strings.
         :param is_loaded: if True, a pre-saved self.tree is loaded, else
@@ -139,9 +139,13 @@ class BKTree:
             self.tree = self.load_tree(str(self.name) + '.pkl')
         else:
             for word in tqdm(self.wordlist[1:]):
-                self.tree = self.insert_word(self.tree, word)
-                # Use self.name to generate .pkl file name
-                self.save_tree(str(self.name) + '.pkl')
+                if dam_lev:
+                    print('Dam-lev')
+                    self.ld = self.calculate_damerau_levenshtein
+                else:
+                    self.tree = self.insert_word(self.tree, word)
+                    # Use self.name to generate .pkl file name
+                    self.save_tree(str(self.name) + '.pkl')
         return self.tree
 
     def insert_word(self, node, word) -> tuple:

@@ -23,7 +23,7 @@ class File:
         else:
             raise NotATextFileError()
 
-    def make_bktree_from_file(self, is_loaded=False):
+    def make_bktree_from_file(self, is_loaded=False, dam_lev=False):
         """
         Use wordlist to instantiate and build BKTree.
         :param is_loaded: if True, skip the build_tree step
@@ -37,7 +37,10 @@ class File:
             if is_loaded:
                 bk_tree.build_tree(is_loaded=True)
             else:
-                bk_tree.tree = bk_tree.build_tree()
+                if dam_lev:
+                    bk_tree.build_tree(dam_lev=True)
+                else:
+                    bk_tree.tree = bk_tree.build_tree()
             bk_tree.get_status()
             return bk_tree
         except NotATextFileError:
