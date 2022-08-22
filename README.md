@@ -48,6 +48,8 @@ The directory contains:
 * numpy==1.21.5
 * tqdm==4.64.0
 * pydot==1.4.2
+* graphviz==0.20.1
+
 
 If you don't have pip installed follow the installing instructions here: https://pip.pypa.io/en/stable/installation/
 
