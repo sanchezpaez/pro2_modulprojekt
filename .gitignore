@@ -1,3 +1,10 @@
+# From Pycharm
 .DS_Store
 .idea/
 __pycache__/
+
+# Generated files
+bk_tree.png
+demo_words.txt.pkl
+words.pkl
+words_nltk.txt.pkl
