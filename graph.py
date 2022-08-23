@@ -3,7 +3,6 @@
 # Project: Modulprojekt PRO II
 # Datum: 22.08.2022
 
-
 import networkx as nx
 from matplotlib import pyplot as plt
 from networkx.drawing.nx_pydot import graphviz_layout
@@ -85,7 +84,14 @@ class Graph:
         tree_graph = nx.DiGraph()
         tree_graph.add_edges_from(self.tuples)
         # This layout draws the directed graph in a hierarchical way
-        positions = graphviz_layout(tree_graph, prog='dot')
+        try:
+            positions = graphviz_layout(tree_graph, prog='dot')
+        except Exception as e:
+            print('Make sure you have all the required packages installed. Graphviz'
+                  'might be missing.')
+            print(e)
+            print('Skipping displaying graph...')
+            return
         nx.draw_networkx(tree_graph, pos=positions, node_size=1500, arrows=True)
         nx.draw_networkx_edge_labels(tree_graph, pos=positions, edge_labels=self.get_edge_labels())
         plt.savefig("bk_tree.png")
