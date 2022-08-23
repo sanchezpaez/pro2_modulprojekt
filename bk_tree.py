@@ -142,8 +142,8 @@ class BKTree:
                 if dam_lev:
                     self.d = self.calculate_damerau_levenshtein
                 self.tree = self.insert_word(self.tree, word)
-                # Use self.name to generate .pkl file name
-                self.save_tree(str(self.name) + '.pkl')
+            # Use self.name to generate .pkl file name
+            self.save_tree(str(self.name) + '.pkl')
         return self.tree
 
     def insert_word(self, node, word) -> tuple:
