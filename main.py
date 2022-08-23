@@ -47,26 +47,27 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
 if __name__ == '__main__':
     try:
         filename = sys.argv[1]
-        visualise = True
-        try:
-            with open(filename, encoding='utf-8') as file:
-                text = file.read()
-                words = text.split(',')
-            # If the list is too long the tree will be too big for visualisation
-            if len(words) > 25:
-                visualise = False
-            try:
-                arg_three = sys.argv[2]
-                load_tree = arg_three == '-t'
-                compute_dam_lev = arg_three == '-dl'
-            except IndexError:
-                load_tree = False
-                compute_dam_lev = False
-            main(filename, compute_dam_lev, load_tree, visualise)
-        except FileNotFoundError:
-            print(f"File '{filename}' does not exist.")
     except IndexError:
         print('You need a minimum of two arguments (name of .py file_name'
               ' and name of .txt file_name) and a maximum of 4 (flags '
               'to calculate Damerau-Levenshtein and to load '
               'pre-saved tree).')
+        sys.exit()
+    try:
+        with open(filename, encoding='utf-8') as file:
+            text = file.read()
+            words = text.split(',')
+    except FileNotFoundError:
+        print(f"File '{filename}' does not exist.")
+        sys.exit()
+    try:
+        arg_three = sys.argv[2]
+        load_tree = arg_three == '-t'
+        compute_dam_lev = arg_three == '-dl'
+    except IndexError:
+        load_tree = False
+        compute_dam_lev = False
+    finally:
+        # If the list is too long the tree will be too big for visualisation
+        visualise = len(words) <= 25
+        main(filename, compute_dam_lev, load_tree, visualise)
