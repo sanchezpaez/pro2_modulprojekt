@@ -31,6 +31,7 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
             print('Building a BK Tree based on Damerau Levenshtein distance...')
             demo_tree = dataset.make_bktree_from_file(dam_lev=True)
         else:
+            print('Building a BK Tree based on the default metric: Levenshtein distance...')
             demo_tree = dataset.make_bktree_from_file()
     # The program always shows an example of Levenshtein distance.
     # The other metrics are optional
@@ -39,7 +40,8 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
         # Second stage: Visualize bk-tree as graph
         demo_tree.make_graph_from_tree()
     # Third stage: interactive mode (word query)
-    demo_tree.interactive_mode_search_word()
+    while True:
+        demo_tree.interactive_mode_search_word()
 
 
 if __name__ == '__main__':
