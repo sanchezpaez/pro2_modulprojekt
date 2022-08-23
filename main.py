@@ -34,7 +34,7 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
             demo_tree = dataset.make_bktree_from_file()
     # The program always shows an example of Levenshtein distance.
     # The other metrics are optional
-    demo_tree.print_levenshtein_distance('help', 'loop')
+    demo_tree.print_example_of_levenshtein_distance('help', 'loop')
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
         demo_tree.make_graph_from_tree()
@@ -54,14 +54,11 @@ if __name__ == '__main__':
             if len(words) > 25:
                 visualise = False
             try:
-                loaded_tree_flag = sys.argv[2]
-                load_tree = loaded_tree_flag == '-t'
+                arg_three = sys.argv[2]
+                load_tree = arg_three == '-t'
+                compute_dam_lev = arg_three == '-dl'
             except IndexError:
                 load_tree = False
-            try:
-                damerau_levenshtein_flag = sys.argv[3]
-                compute_dam_lev = damerau_levenshtein_flag == '-dl'
-            except IndexError:
                 compute_dam_lev = False
             main(filename, compute_dam_lev, load_tree, visualise)
         except FileNotFoundError:

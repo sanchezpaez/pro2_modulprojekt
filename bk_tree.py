@@ -23,7 +23,7 @@ class BKTree:
     def __init__(self, wordlist, name):
         self.wordlist = wordlist
         self.name = name  # It is needed to generate posterior files
-        self.ld = self.calculate_levenshtein_distance
+        self.d = self.calculate_levenshtein_distance
         if wordlist:
             self.root = wordlist[0]
             self.tree = (self.root, {})
@@ -65,9 +65,9 @@ class BKTree:
                                                     distance_matrix[r - 1][c - 1])  # Substitution
         return int(distance_matrix[l1][l2])
 
-    def print_levenshtein_distance(self, string_1, string_2):
+    def print_example_of_levenshtein_distance(self, string_1, string_2):
         lev_dist = self.calculate_levenshtein_distance(string_1, string_2)
-        print(f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
+        print(f"Example: The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
 
     @staticmethod
     def calculate_damerau_levenshtein(string_1, string_2) -> int:
@@ -99,9 +99,9 @@ class BKTree:
                         distance_matrix[r - 2, c - 2])  # Transposition
         return int(distance_matrix[l1][l2])
 
-    def print_damerau_levenshtein(self, string_1, string_2):
+    def print_example_of_damerau_levenshtein(self, string_1, string_2):
         dam_lev_dist = self.calculate_damerau_levenshtein(string_1, string_2)
-        print(f"The Damerau Levenshtein distance between '{string_1}' and '{string_2}' is {dam_lev_dist}.")
+        print(f"Example: The Damerau Levenshtein distance between '{string_1}' and '{string_2}' is {dam_lev_dist}.")
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
@@ -140,12 +140,10 @@ class BKTree:
         else:
             for word in tqdm(self.wordlist[1:]):
                 if dam_lev:
-                    print('Dam-lev')
-                    self.ld = self.calculate_damerau_levenshtein
-                else:
-                    self.tree = self.insert_word(self.tree, word)
-                    # Use self.name to generate .pkl file name
-                    self.save_tree(str(self.name) + '.pkl')
+                    self.d = self.calculate_damerau_levenshtein
+                self.tree = self.insert_word(self.tree, word)
+                # Use self.name to generate .pkl file name
+                self.save_tree(str(self.name) + '.pkl')
         return self.tree
 
     def insert_word(self, node, word) -> tuple:
@@ -155,7 +153,7 @@ class BKTree:
         :parameter word: str, the leaf which will be added to the tree.
         :rtype tuple, the new node resulting of adding one word.
         """
-        d = self.ld(word, node[0])
+        d = self.d(word, node[0])
         distances = node[1]
         if d in distances:
             self.insert_word(distances[d], word)
@@ -173,7 +171,7 @@ class BKTree:
         """
 
         def search(node):
-            distance = self.ld(word, node[0])
+            distance = self.d(word, node[0])
             matching_words = []
             if distance <= d:
                 matching_words.append(node[0])
