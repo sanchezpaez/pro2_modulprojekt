@@ -15,10 +15,12 @@ from graph import Graph
 
 class BKTree:
     """
-    Class that instantiates a BKTree from a list of words, which can
+    Class that makes a BKTree from a list of words, which can
     also be visualised when transformed into an instance of Graph.
-    The static methods calculate the relevant string metrics.
-    Other main methods are build_tree(), search_word and make_graph_from_tree.
+    The static methods are the string metric functions needed
+    to build the tree.
+    Other main methods are build_tree,
+    search_word and make_graph_from_tree.
     """
     def __init__(self, wordlist, name):
         self.wordlist = wordlist
@@ -67,7 +69,8 @@ class BKTree:
 
     def print_example_of_levenshtein_distance(self, string_1, string_2):
         lev_dist = self.calculate_levenshtein_distance(string_1, string_2)
-        print(f"Example: The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
+        print(f"Example of Levenshtein distance: "
+              f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
 
     @staticmethod
     def calculate_damerau_levenshtein(string_1, string_2) -> int:
@@ -101,7 +104,9 @@ class BKTree:
 
     def print_example_of_damerau_levenshtein(self, string_1, string_2):
         dam_lev_dist = self.calculate_damerau_levenshtein(string_1, string_2)
-        print(f"Example: The Damerau Levenshtein distance between '{string_1}' and '{string_2}' is {dam_lev_dist}.")
+        print(f"Example of Damerau Levenshtein distance:"
+              f" The Damerau Levenshtein distance between"
+              f" '{string_1}' and '{string_2}' is {dam_lev_dist}.")
 
     @staticmethod
     def calculate_hamming_distance(string_1, string_2):
@@ -123,10 +128,9 @@ class BKTree:
                     edits += 1
         return edits
 
-    @staticmethod
-    def print_hamming_distance(string_1, string_2):
-        hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
-        print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
+    def print_hamming_distance(self, string_1, string_2):
+        hamming_d = self.calculate_hamming_distance(string_1, string_2)
+        print(f"The Hamming distance between '{self}' and '{string_2}' is {hamming_d}.")
 
     def build_tree(self, is_loaded=False, dam_lev=False) -> tuple:
         """
@@ -253,8 +257,10 @@ class BKTree:
         Handle typing errors and exit program if user does not type
         anything.
         """
-        user_input = input('Please enter a word query and the'
-                           ' desired edit distance threshold separated by a space .\n')
+        user_input = input("Please enter a word query and the desired"
+                           " edit distance threshold separated by a space."
+                           " You can exit the program anytime by "
+                           "hitting 'enter'\n")
         if user_input:
             try:
                 try:
@@ -271,7 +277,8 @@ class BKTree:
                     except NoWordsMatchedError:
                         print("No words in the list match your query.")
                 except NotAWordError:
-                    print('That is not an actual word.')
+                    print('That does not look like a word. '
+                          'Make sure you only type letters')
             except IndexError:
                 print('You need to type a word followed by an integer number.')
         else:

@@ -38,7 +38,7 @@ The directory contains:
 
 1) Clone the repository.
 
-2) Using your terminal navigate through your computer to find the directory were you cloned the repository. Then from Terminal (look for 'Terminal' on Spotlight), or CMD for Windows,  set your working directory to that of your folder (for example: cd Desktop/pro2_modulprojekt_sanchezpaez).
+2) Using your terminal navigate through your computer to find the directory were you cloned the repository. Then from Terminal (look for 'Terminal' on Spotlight), or CMD for Windows,  set your working directory to that of your folder (for example: cd Desktop/pro2_modulprojekt_sanchezpaez-main).
 
 3) Required packages:
 

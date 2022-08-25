@@ -2,6 +2,7 @@
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
 # Datum: 22.08.2022
+import sys
 
 from bk_tree import BKTree
 from exception import NotATextFileError
@@ -16,10 +17,16 @@ class File:
     def load_vocab(self) -> list:
         """Read .txt file and return list of words."""
         if str(self.filename).endswith('.txt'):
-            with open(self.filename, encoding='utf-8') as file:
-                text = file.read()
-                words = text.split(',')
-            return words
+            try:
+                with open(self.filename, encoding='utf-8') as file:
+                    text = file.read()
+                    words = text.split(',')
+                if len(words) == 1:
+                    words = text.split()
+                return words
+            except FileNotFoundError:
+                print(f"File '{self.filename}' does not exist.")
+                sys.exit()
         else:
             raise NotATextFileError()
 

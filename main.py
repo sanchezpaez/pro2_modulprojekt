@@ -9,17 +9,21 @@ import sys
 from file import File
 
 
-def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
+def main(file_name, dam_lev, presaved, visualise_tree):
     """
-    Build tree from file, compute relevant string metrics, implement search_word()
-    and give information about tree. If the wordlist upon which the tree is
-    built is of manageable size, visualize tree too.
+    Build tree from file, compute relevant string metrics,
+    implement search_word()
+    and give information about tree. If the wordlist upon
+    which the tree is built is of manageable size,
+    visualize tree too.
     :param file_name: str with name of file which contains vocabulary.
-    :param dam_lev: bool. If True prints an example of calculate_levenshtein_distance().
-    :param presaved: bool. If True loads a pre_saved tree.
+    :param dam_lev: bool. If True prints an example
+    of calculate_levenshtein_distance().
+    :param presaved: bool. If True loads a pre_saved tree instead of
+    building it.
     :param visualise_tree: bool. If True draws graphic to represent tree.
-    :param loaded_tree: bool. If True loads pre-saved tree instead of building it.
-    :return: make_bktree_from_file(), make_graph_from_tree() if visualise_tree=True
+    :return: make_bktree_from_file(), make_graph_from_tree()
+    if visualise_tree=True
     and interactive_mode_search_word().
     """
     # First stage: read data from file_name and build bk tree
@@ -28,17 +32,20 @@ def main(file_name, dam_lev=False, presaved=False, visualise_tree=False):
         demo_tree = dataset.make_bktree_from_file(is_loaded=True)
     else:
         if dam_lev:
-            print('Building a BK Tree based on Damerau Levenshtein distance...')
+            print('Building a BK Tree'
+                  ' based on Damerau Levenshtein distance...')
             demo_tree = dataset.make_bktree_from_file(dam_lev=True)
+            demo_tree.print_example_of_damerau_levenshtein('loop', 'pool')
         else:
-            print('Building a BK Tree based on the default metric: Levenshtein distance...')
+            print('Building a BK Tree based on the'
+                  ' default metric: Levenshtein distance...')
             demo_tree = dataset.make_bktree_from_file()
-    # The program always shows an example of Levenshtein distance.
-    # The other metrics are optional
-    demo_tree.print_example_of_levenshtein_distance('help', 'loop')
+            demo_tree.print_example_of_levenshtein_distance('help', 'loop')
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
+        print('Close the window with the tree graph in order to continue with the program.')
         demo_tree.make_graph_from_tree()
+
     # Third stage: interactive mode (word query)
     while True:
         demo_tree.interactive_mode_search_word()
@@ -54,13 +61,6 @@ if __name__ == '__main__':
               'pre-saved tree).')
         sys.exit()
     try:
-        with open(filename, encoding='utf-8') as file:
-            text = file.read()
-            words = text.split(',')
-    except FileNotFoundError:
-        print(f"File '{filename}' does not exist.")
-        sys.exit()
-    try:
         arg_three = sys.argv[2]
         load_tree = arg_three == '-t'
         compute_dam_lev = arg_three == '-dl'
@@ -69,5 +69,5 @@ if __name__ == '__main__':
         compute_dam_lev = False
     finally:
         # If the list is too long the tree will be too big for visualisation
-        visualise = len(words) <= 25
+        visualise = len(File(filename).load_vocab()) <= 25
         main(filename, compute_dam_lev, load_tree, visualise)

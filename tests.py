@@ -20,11 +20,15 @@ words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
 
 class TestFile:
     dataset = File('demo_words.txt')
+    dataset2 = File('test_words_whitespace.txt')
 
     def test_load_vocab(self):
         assert self.dataset.load_vocab() == [
             'help', 'hell', 'hello', 'loop', 'helps', 'troop', 'shell', 'helper'
         ]
+
+    def test_word_each_line(self):
+        assert self.dataset2.load_vocab() == ['hello', 'here', 'is', 'an', 'example']
 
     def test_make_bktree_from_file_type(self):
         assert type(self.dataset.make_bktree_from_file()) == BKTree
@@ -75,8 +79,20 @@ class TestBKTree:
     def test_different_length_words(self):
         assert self.tree.calculate_levenshtein_distance('help', 'loop') == 3
 
+    def test_transposition(self):
+        assert self.tree.calculate_levenshtein_distance('abcdef', 'abcfad') == 3
+
     # Test calculate_damerau_levenshtein:
-    def test_damerau_levenshtein(self):
+    def test_distance_0_dam(self):
+        assert self.tree.calculate_damerau_levenshtein('man', 'man') == 0
+
+    def test_distance_empty_string_dam(self):
+        assert self.tree.calculate_damerau_levenshtein('', 'man') == 3
+
+    def test_different_length_words_dam(self):
+        assert self.tree.calculate_damerau_levenshtein('help', 'loop') == 2
+
+    def test_damerau_levenshtein_transposition(self):
         assert self.tree.calculate_damerau_levenshtein('ab', 'ba') == 1
         assert self.tree.calculate_damerau_levenshtein('abcdef', 'abcfad') == 2
 
