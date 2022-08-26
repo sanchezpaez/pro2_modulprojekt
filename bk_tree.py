@@ -129,9 +129,10 @@ class BKTree:
                     edits += 1
         return edits
 
-    def print_hamming_distance(self, string_1, string_2):
+    def print_example_of_hamming_distance(self, string_1, string_2):
         hamming_d = self.calculate_hamming_distance(string_1, string_2)
-        print(f"The Hamming distance between '{self}' and '{string_2}' is {hamming_d}.")
+        print(f"The Hamming distance between '{self}' and '{string_2}'"
+              f" is {hamming_d}.")
 
     def build_tree(self, is_loaded=False, dam_lev=False) -> tuple:
         """
@@ -264,7 +265,7 @@ class BKTree:
         user_input = input("Please enter a word query and the desired"
                            " edit distance threshold separated by a space."
                            " You can exit the program anytime by "
-                           "hitting 'enter'\n")
+                           "hitting 'enter'.\n")
         if user_input:
             try:
                 assert len(user_input.split()) == 2
@@ -277,7 +278,7 @@ class BKTree:
                     raise NotAWordError
             except NotAWordError:
                 print('That does not look like a word. '
-                      'Make sure you only type letters')
+                      'Make sure you only type letters.')
                 self.interactive_mode_search_word()
             try:
                 number = user_input.split()[1]
