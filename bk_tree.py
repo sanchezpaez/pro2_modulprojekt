@@ -75,8 +75,9 @@ class BKTree:
     @staticmethod
     def calculate_damerau_levenshtein(string_1, string_2) -> int:
         """
-        Like the Levenstein Distance, computing transpositions
-        (swapping of adjacent symbols) as well.
+        Like the Levenshtein distance metric, but
+        computing transpositions (swapping of adjacent symbols)
+        as well.
         """
         l1 = len(string_1)
         l2 = len(string_2)
@@ -137,11 +138,14 @@ class BKTree:
         Build BK Tree from list of strings.
         :param is_loaded: if True, a pre-saved self.tree is loaded, else
         a new self.tree structure is built
-        :rtype tuple
+        :param dam_lev: if True, the tree is built using the Damerau
+        Levenshtein distance metric.
+        :rtype tuple with self.tree
         """
         if is_loaded:
             self.tree = self.load_tree(str(self.name) + '.pkl')
         else:
+            # Show progress bar in the making of the tree
             for word in tqdm(self.wordlist[1:]):
                 if dam_lev:
                     self.d = self.calculate_damerau_levenshtein
@@ -263,23 +267,28 @@ class BKTree:
                            "hitting 'enter'\n")
         if user_input:
             try:
-                try:
-                    search_word = user_input.split()[0]
-                    number = user_input.split()[1]
-                    if not search_word.isalpha():
-                        raise NotAWordError
-                    if isinstance(int(number), int):
-                        d = int(number)
-                    else:
-                        print('That is not a number.')
-                    try:
-                        self.search_word(search_word, d)
-                    except NoWordsMatchedError:
-                        print("No words in the list match your query.")
-                except NotAWordError:
-                    print('That does not look like a word. '
-                          'Make sure you only type letters')
-            except IndexError:
+                assert len(user_input.split()) == 2
+            except AssertionError:
                 print('You need to type a word followed by an integer number.')
+                self.interactive_mode_search_word()
+            try:
+                search_word = user_input.split()[0]
+                if not search_word.isalpha():
+                    raise NotAWordError
+            except NotAWordError:
+                print('That does not look like a word. '
+                      'Make sure you only type letters')
+                self.interactive_mode_search_word()
+            try:
+                number = user_input.split()[1]
+                d = int(number)
+            except ValueError:
+                print('That is not a number.')
+                self.interactive_mode_search_word()
+            try:
+                self.search_word(search_word, d)
+            except NoWordsMatchedError:
+                print("No words in the list match your query.")
+                self.interactive_mode_search_word()
         else:
             sys.exit()
