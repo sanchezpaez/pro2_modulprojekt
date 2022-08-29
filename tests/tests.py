@@ -19,7 +19,7 @@ words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
 
 
 class TestFile:
-    dataset = File('demo_words.txt')
+    dataset = File('demo_words2.txt')
     dataset2 = File('test_words_whitespace.txt')
 
     def test_load_vocab(self):
