@@ -8,6 +8,7 @@ import sys
 
 from classes.exception import NotATextFileError
 from classes.file import File
+from vocabulary import save_vocab
 
 
 def main(file_name, dam_lev, presaved, visualise_tree):
@@ -32,6 +33,9 @@ def main(file_name, dam_lev, presaved, visualise_tree):
         dataset = File(file_name)
     except NotATextFileError():
         print('This is not a .txt file_name!')
+        sys.exit()
+    if file_name == 'words_nltk.txt':
+        save_vocab()
     if presaved:
         demo_tree = dataset.make_bktree_from_file(is_loaded=True)
     else:
@@ -71,11 +75,5 @@ if __name__ == '__main__':
     except IndexError:
         load_tree = False
         compute_dam_lev = False
-    finally:
-        # If the list is too long the tree will be too big for visualisation
-        try:
-            visualise = len(File(filename).load_vocab()) <= 25
-        except NotATextFileError:
-            print('This is not a .txt file_name!')
-            sys.exit()
-        main(filename, compute_dam_lev, load_tree, visualise)
+    visualise = '-v' in sys.argv
+    main(filename, compute_dam_lev, load_tree, visualise)
