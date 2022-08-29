@@ -9,7 +9,7 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-from classes.exception import NoWordsMatchedError, EmptyTreeError, EmptyListError, NotAWordError
+from classes.exception import NoWordsMatchedError, EmptyTreeError, NotAWordError
 from classes.graph import Graph
 
 
@@ -22,6 +22,7 @@ class BKTree:
     Other main methods are build_tree,
     search_word and make_graph_from_tree.
     """
+
     def __init__(self, wordlist, name):
         self.wordlist = wordlist
         self.name = name  # It is needed to generate posterior files
@@ -32,7 +33,6 @@ class BKTree:
         else:
             self.root = ''
             self.tree = None
-
 
     @staticmethod
     def calculate_levenshtein_distance(string_1, string_2) -> int:
@@ -108,31 +108,6 @@ class BKTree:
         print(f"Example of Damerau Levenshtein distance:"
               f" The Damerau Levenshtein distance between"
               f" '{string_1}' and '{string_2}' is {dam_lev_dist}.")
-
-    @staticmethod
-    def calculate_hamming_distance(string_1, string_2):
-        """
-        If two strings are of the same length, calculate the
-        number of substitutions to turn one string into the
-        other.
-        :return: int representing number of substitutions.
-        """
-        if len(string_1) != len(string_2):
-            is_not_measurable = True
-            print(f"'{string_1}' and '{string_2}' cannot be compared,"
-                  f" for they are of different length.")
-            return is_not_measurable
-        else:
-            edits = 0
-            for i, ch in enumerate(string_1):
-                if string_2[i] != string_1[i]:
-                    edits += 1
-        return edits
-
-    def print_example_of_hamming_distance(self, string_1, string_2):
-        hamming_d = self.calculate_hamming_distance(string_1, string_2)
-        print(f"The Hamming distance between '{self}' and '{string_2}'"
-              f" is {hamming_d}.")
 
     def build_tree(self, is_loaded=False, dam_lev=False) -> tuple:
         """

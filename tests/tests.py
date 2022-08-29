@@ -96,16 +96,6 @@ class TestBKTree:
         assert self.tree.calculate_damerau_levenshtein('ab', 'ba') == 1
         assert self.tree.calculate_damerau_levenshtein('abcdef', 'abcfad') == 2
 
-    # Test calculate_hamming_distance:
-    def test_different_length(self):
-        assert True == self.tree.calculate_hamming_distance('book', 'books')
-
-    def test_same_length_one(self):
-        assert self.tree.calculate_hamming_distance('can', 'man') == 1
-
-    def test_same_length_many(self):
-        assert self.tree.calculate_hamming_distance('miracle', 'milagro') == 4
-
 
 class TestGraph:
     tree = BKTree(words, 'words')

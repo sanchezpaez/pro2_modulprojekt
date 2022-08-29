@@ -10,7 +10,6 @@ class NotATextFileError(Exception):
 class NoWordsMatchedError(Exception):
     pass
 
-
 class EmptyTreeError(Exception):
     pass
 
