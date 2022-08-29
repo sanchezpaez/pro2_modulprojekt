@@ -4,8 +4,8 @@
 # Datum: 22.08.2022
 import sys
 
-from bk_tree import BKTree
-from exception import NotATextFileError
+from classes.bk_tree import BKTree
+from classes.exception import NotATextFileError
 
 
 class File:

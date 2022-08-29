@@ -6,8 +6,8 @@
 
 import sys
 
-from exception import NotATextFileError
-from file import File
+from classes.exception import NotATextFileError
+from classes.file import File
 
 
 def main(file_name, dam_lev, presaved, visualise_tree):

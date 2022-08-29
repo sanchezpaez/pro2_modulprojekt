@@ -10,10 +10,10 @@ import networkx as nx
 from networkx import DiGraph
 from networkx.drawing.nx_pydot import graphviz_layout
 
-from bk_tree import BKTree
-from exception import NoWordsMatchedError, NotATextFileError, EmptyTreeError
-from file import File
-from graph import Graph
+from classes.bk_tree import BKTree
+from classes.exception import NoWordsMatchedError, NotATextFileError, EmptyTreeError
+from classes.file import File
+from classes.graph import Graph
 
 words = ["book", "books", "cake", "boo", "boon", "cook", "cape", "cart"]
 

@@ -9,8 +9,8 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-from exception import NoWordsMatchedError, EmptyTreeError, EmptyListError, NotAWordError
-from graph import Graph
+from classes.exception import NoWordsMatchedError, EmptyTreeError, EmptyListError, NotAWordError
+from classes.graph import Graph
 
 
 class BKTree:
