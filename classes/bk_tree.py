@@ -226,8 +226,10 @@ class BKTree:
         """Instantiate Graph from BKTree and plot graphic."""
         # Build graph from tree
         tree_graph = Graph(self.tree)
-        # Plot graph
-        tree_graph.visualize_graph()
+        tree_graph.create_tuples()
+        tree_graph.create_triples()
+        tree_graph.get_edge_labels()
+        return tree_graph
 
     def interactive_mode_search_word(self):
         """

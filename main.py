@@ -49,11 +49,12 @@ def main(file_name, dam_lev, presaved, visualise_tree):
                   ' default metric: Levenshtein distance...')
             demo_tree = dataset.make_bktree_from_file()
             demo_tree.print_example_of_levenshtein_distance('help', 'loop')
+    tree_graph = demo_tree.make_graph_from_tree()
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
         print('Close the window with the tree graph in order to'
               ' continue with the program.')
-        demo_tree.make_graph_from_tree()
+        tree_graph.visualize_graph()
 
     # Third stage: interactive mode (word query)
     while True:
