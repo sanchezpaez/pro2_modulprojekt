@@ -51,7 +51,8 @@ def main(file_name, dam_lev, presaved, visualise_tree):
             demo_tree.print_example_of_levenshtein_distance('help', 'loop')
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
-        print('Close the window with the tree graph in order to continue with the program.')
+        print('Close the window with the tree graph in order to'
+              ' continue with the program.')
         demo_tree.make_graph_from_tree()
 
     # Third stage: interactive mode (word query)
@@ -68,12 +69,10 @@ if __name__ == '__main__':
               'to calculate Damerau-Levenshtein and to load '
               'pre-saved tree).')
         sys.exit()
-    try:
-        arg_three = sys.argv[2]
-        load_tree = arg_three == '-t'
-        compute_dam_lev = arg_three == '-dl'
-    except IndexError:
-        load_tree = False
-        compute_dam_lev = False
     visualise = '-v' in sys.argv
+    load_tree = '-t' in sys.argv
+    compute_dam_lev = '-dl' in sys.argv
+    if load_tree and compute_dam_lev:
+        raise RuntimeError("You must have run the program with '-dl'"
+                           " before calling the '-t' option")
     main(filename, compute_dam_lev, load_tree, visualise)
