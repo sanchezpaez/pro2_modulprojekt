@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 19.08.2022
+# Datum: 22.08.2022
+import sys
 
-from bk_tree import BKTree
-from exception import NotATextFileError
+from classes.bk_tree import BKTree
+from classes.exception import NotATextFileError
 
 
 class File:
@@ -16,14 +17,20 @@ class File:
     def load_vocab(self) -> list:
         """Read .txt file and return list of words."""
         if str(self.filename).endswith('.txt'):
-            with open(self.filename, encoding='utf-8') as file:
-                text = file.read()
-                words = text.split(',')
-            return words
+            try:
+                with open(self.filename, encoding='utf-8') as file:
+                    text = file.read()
+                    words = text.split(',')
+                if len(words) == 1:
+                    words = text.split()
+                return words
+            except FileNotFoundError:
+                print(f"File '{self.filename}' does not exist.")
+                sys.exit()
         else:
             raise NotATextFileError()
 
-    def make_bktree_from_file(self, is_loaded=False):
+    def make_bktree_from_file(self, is_loaded=False, dam_lev=False):
         """
         Use wordlist to instantiate and build BKTree.
         :param is_loaded: if True, skip the build_tree step
@@ -37,7 +44,10 @@ class File:
             if is_loaded:
                 bk_tree.build_tree(is_loaded=True)
             else:
-                bk_tree.tree = bk_tree.build_tree()
+                if dam_lev:
+                    bk_tree.build_tree(dam_lev=True)
+                else:
+                    bk_tree.tree = bk_tree.build_tree()
             bk_tree.get_status()
             return bk_tree
         except NotATextFileError:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Authorin: Sandra Sánchez
 # Project: Modulprojekt PRO II
-# Datum: 19.08.2022
+# Datum: 22.08.2022
 
 import pickle
 import sys
@@ -9,28 +9,30 @@ import sys
 import numpy as np
 from tqdm import tqdm
 
-from exception import NoWordsMatchedError, EmptyTreeError, EmptyListError, NotAWordError
-from graph import Graph
+from classes.exception import NoWordsMatchedError, EmptyTreeError, NotAWordError
+from classes.graph import Graph
 
 
 class BKTree:
     """
-    Class that instantiates a BKTree from a list of words, which can
+    Class that makes a BKTree from a list of words, which can
     also be visualised when transformed into an instance of Graph.
-    The static methods calculate the relevant string metrics.
-    Other main methods are build_tree(), search_word and make_graph_from_tree.
+    The static methods are the string metric functions needed
+    to build the tree.
+    Other main methods are build_tree,
+    search_word and make_graph_from_tree.
     """
+
     def __init__(self, wordlist, name):
         self.wordlist = wordlist
         self.name = name  # It is needed to generate posterior files
-        self.ld = self.calculate_levenshtein_distance
+        self.d = self.calculate_levenshtein_distance
         if wordlist:
             self.root = wordlist[0]
             self.tree = (self.root, {})
         else:
             self.root = ''
             self.tree = None
-
 
     @staticmethod
     def calculate_levenshtein_distance(string_1, string_2) -> int:
@@ -65,15 +67,17 @@ class BKTree:
                                                     distance_matrix[r - 1][c - 1])  # Substitution
         return int(distance_matrix[l1][l2])
 
-    def print_levenshtein_distance(self, string_1, string_2):
+    def print_example_of_levenshtein_distance(self, string_1, string_2):
         lev_dist = self.calculate_levenshtein_distance(string_1, string_2)
-        print(f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
+        print(f"Example of Levenshtein distance: "
+              f"The Levenshtein distance between '{string_1}' and '{string_2}' is {lev_dist}.")
 
     @staticmethod
     def calculate_damerau_levenshtein(string_1, string_2) -> int:
         """
-        Like the Levenstein Distance, computing transpositions
-        (swapping of adjacent symbols) as well.
+        Like the Levenshtein distance metric, but
+        computing transpositions (swapping of adjacent symbols)
+        as well.
         """
         l1 = len(string_1)
         l2 = len(string_2)
@@ -99,49 +103,31 @@ class BKTree:
                         distance_matrix[r - 2, c - 2])  # Transposition
         return int(distance_matrix[l1][l2])
 
-    def print_damerau_levenshtein(self, string_1, string_2):
+    def print_example_of_damerau_levenshtein(self, string_1, string_2):
         dam_lev_dist = self.calculate_damerau_levenshtein(string_1, string_2)
-        print(f"The Damerau Levenshtein distance between '{string_1}' and '{string_2}' is {dam_lev_dist}.")
+        print(f"Example of Damerau Levenshtein distance:"
+              f" The Damerau Levenshtein distance between"
+              f" '{string_1}' and '{string_2}' is {dam_lev_dist}.")
 
-    @staticmethod
-    def calculate_hamming_distance(string_1, string_2):
-        """
-        If two strings are of the same length, calculate the
-        number of substitutions to turn one string into the
-        other.
-        :return: int representing number of substitutions.
-        """
-        if len(string_1) != len(string_2):
-            is_not_measurable = True
-            print(f"'{string_1}' and '{string_2}' cannot be compared,"
-                  f" for they are of different length.")
-            return is_not_measurable
-        else:
-            edits = 0
-            for i, ch in enumerate(string_1):
-                if string_2[i] != string_1[i]:
-                    edits += 1
-        return edits
-
-    @staticmethod
-    def print_hamming_distance(string_1, string_2):
-        hamming_d = BKTree.calculate_hamming_distance(string_1, string_2)
-        print(f"The Hamming distance between '{string_1}' and '{string_2}' is {hamming_d}.")
-
-    def build_tree(self, is_loaded=False) -> tuple:
+    def build_tree(self, is_loaded=False, dam_lev=False) -> tuple:
         """
         Build BK Tree from list of strings.
         :param is_loaded: if True, a pre-saved self.tree is loaded, else
         a new self.tree structure is built
-        :rtype tuple
+        :param dam_lev: if True, the tree is built using the Damerau
+        Levenshtein distance metric.
+        :rtype tuple with self.tree
         """
         if is_loaded:
             self.tree = self.load_tree(str(self.name) + '.pkl')
         else:
+            # Show progress bar in the making of the tree
             for word in tqdm(self.wordlist[1:]):
+                if dam_lev:
+                    self.d = self.calculate_damerau_levenshtein
                 self.tree = self.insert_word(self.tree, word)
-                # Use self.name to generate .pkl file name
-                self.save_tree(str(self.name) + '.pkl')
+            # Use self.name to generate .pkl file name
+            self.save_tree(str(self.name) + '.pkl')
         return self.tree
 
     def insert_word(self, node, word) -> tuple:
@@ -151,7 +137,7 @@ class BKTree:
         :parameter word: str, the leaf which will be added to the tree.
         :rtype tuple, the new node resulting of adding one word.
         """
-        d = self.ld(word, node[0])
+        d = self.d(word, node[0])
         distances = node[1]
         if d in distances:
             self.insert_word(distances[d], word)
@@ -169,7 +155,7 @@ class BKTree:
         """
 
         def search(node):
-            distance = self.ld(word, node[0])
+            distance = self.d(word, node[0])
             matching_words = []
             if distance <= d:
                 matching_words.append(node[0])
@@ -233,6 +219,7 @@ class BKTree:
         with open(filename, "rb") as file:
             output = pickle.load(file)
             self.tree = output
+            print('Loading pre-saved tree...')
             return self.tree
 
     def make_graph_from_tree(self):
@@ -250,26 +237,34 @@ class BKTree:
         Handle typing errors and exit program if user does not type
         anything.
         """
-        user_input = input('Please enter a word query and the'
-                           ' desired edit distance threshold separated by a space .\n')
+        user_input = input("Please enter a word query and the desired"
+                           " edit distance threshold separated by a space."
+                           " You can exit the program anytime by "
+                           "hitting 'enter'.\n")
         if user_input:
             try:
-                try:
-                    search_word = user_input.split()[0]
-                    number = user_input.split()[1]
-                    if not search_word.isalpha():
-                        raise NotAWordError
-                    if isinstance(int(number), int):
-                        d = int(number)
-                    else:
-                        print('That is not a number.')
-                    try:
-                        self.search_word(search_word, d)
-                    except NoWordsMatchedError:
-                        print("No words in the list match your query.")
-                except NotAWordError:
-                    print('That is not an actual word.')
-            except IndexError:
+                assert len(user_input.split()) == 2
+            except AssertionError:
                 print('You need to type a word followed by an integer number.')
+                self.interactive_mode_search_word()
+            try:
+                search_word = user_input.split()[0]
+                if not search_word.isalpha():
+                    raise NotAWordError
+            except NotAWordError:
+                print('That does not look like a word. '
+                      'Make sure you only type letters.')
+                self.interactive_mode_search_word()
+            try:
+                number = user_input.split()[1]
+                d = int(number)
+            except ValueError:
+                print('That is not a number.')
+                self.interactive_mode_search_word()
+            try:
+                self.search_word(search_word, d)
+            except NoWordsMatchedError:
+                print("No words in the list match your query.")
+                self.interactive_mode_search_word()
         else:
             sys.exit()
