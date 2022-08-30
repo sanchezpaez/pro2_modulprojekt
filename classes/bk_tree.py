@@ -225,9 +225,12 @@ class BKTree:
     def make_graph_from_tree(self):
         """Instantiate Graph from BKTree and plot graphic."""
         # Build graph from tree
+        print('A graph is being generated.')
         tree_graph = Graph(self.tree)
-        # Plot graph
-        tree_graph.visualize_graph()
+        print('Edges of the graph are being calculated...')
+        tree_graph.get_edge_labels()
+        print('A graph has been generated from the tree.')
+        return tree_graph
 
     def interactive_mode_search_word(self):
         """

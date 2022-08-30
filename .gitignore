@@ -7,4 +7,5 @@ __pycache__/
 bk_tree.png
 demo_words.txt.pkl
 words.pkl
+words_nltk.txt
 words_nltk.txt.pkl

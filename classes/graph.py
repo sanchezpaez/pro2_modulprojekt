@@ -55,10 +55,10 @@ class Graph:
         node_1 = self.tree[0]
         nested_element = self.tree[1]
         for distance in nested_element:
-            node_2 = nested_element[distance][0]
+            new_tuple = nested_element[distance]
+            node_2 = new_tuple[0]
             _tuple = node_1, node_2
             self.tuples.append(_tuple)
-            new_tuple = nested_element[distance]
             if new_tuple[1]:
                 graph_tuple = Graph(new_tuple)
                 self.tuples = self.tuples + graph_tuple.create_tuples()

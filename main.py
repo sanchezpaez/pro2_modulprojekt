@@ -51,9 +51,10 @@ def main(file_name, dam_lev, presaved, visualise_tree):
             demo_tree.print_example_of_levenshtein_distance('help', 'loop')
     if visualise_tree:
         # Second stage: Visualize bk-tree as graph
+        tree_graph = demo_tree.make_graph_from_tree()
         print('Close the window with the tree graph in order to'
               ' continue with the program.')
-        demo_tree.make_graph_from_tree()
+        tree_graph.visualize_graph()
 
     # Third stage: interactive mode (word query)
     while True:
